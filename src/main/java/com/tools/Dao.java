@@ -1,6 +1,5 @@
 package com.tools;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -10,14 +9,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public class Dao {
 	
-	@Autowired
 	public JdbcTemplate jdbcTemplate;
 	
-	public Dao() {
-		this.jdbcTemplate = new JdbcTemplate();
-	}
-	
-	public JdbcTemplate getDao() {
-		return this.jdbcTemplate;
+	public Dao(JdbcTemplate jdbcTemplate) {
+	    this.jdbcTemplate = jdbcTemplate;	
 	}
 }
