@@ -3,6 +3,7 @@ package com.mj;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -25,6 +26,8 @@ public class UserApplication {
 	
 	@Autowired
 	public JdbcTemplate jdbcTemplate;
+	@Autowired
+	public HttpSession session;
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	/**
 	 * 用户注册接口
@@ -82,12 +85,14 @@ public class UserApplication {
         	return response;
         }
         //写入session,TODO
+        session.setAttribute("user", map);
         //写入日志
         ActionLogDao model = new ActionLogDao(jdbcTemplate);
     	model.insert(2, "账号:"+regist.Account+",进行登录操作");
     	//返回前端登录成功
+    	Map user = (Map)session.getAttribute("user");
     	response.setCode(1);
-    	response.setMsg("登录成功");
+    	response.setMsg("登录成功"+user.get("account").toString());
 		return response;
 	}
 	
@@ -97,7 +102,8 @@ public class UserApplication {
 	 */
 	@RequestMapping(value="/user/test", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Response teset(){
-		Response response = new Response(0, Tools.getMD5("123456"));
+		Map user = (Map)session.getAttribute("user");
+		Response response = new Response(0, user.get("user_id").toString());
 	    return response;
 	}
 }

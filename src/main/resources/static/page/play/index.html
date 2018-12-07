@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Game</title>
+</head>
+<body>
+哈哈哈
+</body>
+</html>
+<script type="text/javascript">
+var socket = new WebSocket('ws://' + window.location.host + '/mj');
+
+//Add an event listener for when a connection is open
+socket.onopen = function() {
+console.log('WebSocket connection opened. Ready to send messages.');
+
+// Send a message to the server
+socket.send('Hello, from WebSocket client!');
+};
+
+//Add an event listener for when a message is received from the server
+socket.onmessage = function(message) {
+console.log('Message received from server: ' + message);
+};
+</script>
