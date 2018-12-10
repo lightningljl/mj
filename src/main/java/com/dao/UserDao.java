@@ -1,6 +1,8 @@
 package com.dao;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.entity.Users;
@@ -9,6 +11,7 @@ import com.tools.Dao;
 public class UserDao extends Dao {
     
 	private String table = "users";
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	public UserDao(JdbcTemplate jdbcTemplate) {
 		super(jdbcTemplate);
@@ -36,7 +39,13 @@ public class UserDao extends Dao {
 	 */
 	public Map login(String account, String password) {
 		String sql = "SELECT user_id,account,nick,gender,avatar FROM "+table+" where account='"+account+"' and password='"+password+"'";
-		Map  map = jdbcTemplate.queryForMap(sql);
-		return map;
+		try {
+			Map  map = jdbcTemplate.queryForMap(sql);
+			return map;
+		} catch(Exception e) {
+			//记录没有查询出用户
+			logger.info("账号"+account+"尝试登录，登录失败!"+e.getMessage());
+		}
+		return null;
 	}
 }

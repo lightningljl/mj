@@ -1,5 +1,6 @@
 package com.mj;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -81,7 +82,7 @@ public class UserApplication {
         }
         Map map = dao.login(regist.Account, regist.Password);
         //如果当前账号密码未查询到相关数据
-        if( map.isEmpty() ) {
+        if( map==null || map.isEmpty() ) {
         	return response;
         }
         //写入session,TODO
@@ -90,9 +91,24 @@ public class UserApplication {
         ActionLogDao model = new ActionLogDao(jdbcTemplate);
     	model.insert(2, "账号:"+regist.Account+",进行登录操作");
     	//返回前端登录成功
-    	Map user = (Map)session.getAttribute("user");
+    	//Map user = (Map)session.getAttribute("user");
+    	//String account = user.get("account").toString();
     	response.setCode(1);
-    	response.setMsg("登录成功"+user.get("account").toString());
+    	response.setMsg("登录成功");
+		return response;
+	}
+	
+	@RequestMapping(value="/user/uuid", produces = MediaType.APPLICATION_JSON_VALUE,method= RequestMethod.POST)
+	public Response uuid() {
+		Response response = new Response(0, "您还未登录");
+		Map user = (Map)session.getAttribute("user");
+		if( user!=null && !user.isEmpty() ) {
+			Map<String, String> info = new HashMap<>();
+			info.put("uuid", user.get("user_id").toString());
+			response.setCode(1);
+			response.setMsg("成功");
+			response.setData(info);
+		}
 		return response;
 	}
 	

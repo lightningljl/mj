@@ -37,7 +37,7 @@ public class WebSocketServer {
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
     private Session session;
     
-    private static Hashtable sessions = new Hashtable();
+    private static Hashtable<String, Object> sessions = new Hashtable<>();
  
     /**
      * 连接建立成功调用的方法*/
@@ -63,7 +63,7 @@ public class WebSocketServer {
 	//	}
  
     /**
-     * 连接关闭调用的方法
+               * 连接关闭调用的方法
      */
     @OnClose
     public void onClose() {
@@ -82,20 +82,31 @@ public class WebSocketServer {
     	ObjectMapper mapper = new ObjectMapper(); 
     	mapper.configure(Feature.ALLOW_SINGLE_QUOTES, true);   
     	mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+    	//统一返回消息
+    	Response response = new Response(0, "操作失败");
     	try {  
     	    //转换为HashMap对象  
     	    //HashMap jsonMap = mapper.readValue(message, HashMap.class);  
-    	    Map<String, Map<String, Object>> maps = mapper.readValue(message, Map.class);  
-    	    int code = Integer.parseInt(maps.get("code").toString());
+    	    Map<String, Object> maps = mapper.readValue(message, Map.class); 
+    	    String thisCode = maps.get("code").toString();
+    	    log.info("得到的uuid:"+thisCode);
+    	    int code = Integer.parseInt(thisCode);
     	    switch(code) {
     	       //存储uuid
     	       case(1):
-    	    	   String uuid = maps.get("code").toString();
+    	    	   String uuid = maps.get("data").toString();
                    sessions.put(uuid, session);
+                   response.setCode(1);
+                   response.setMsg("uuid同步成功");
+	               String responseMessage = mapper.writeValueAsString(response); //返回字符串
+	               sendMessage(responseMessage);
+	               break;
     	       case(2):
-    	    	   
+    	    	   log.info("操作步骤二");
+    	    	   break;
     	    }
     	} catch (Exception e) {  
+    		log.error("操作失败");
     	    e.printStackTrace();  
     	}  
     }

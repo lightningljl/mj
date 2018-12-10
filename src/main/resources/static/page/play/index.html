@@ -3,23 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <title>Game</title>
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
 </head>
 <body>
 哈哈哈
 </body>
 </html>
 <script type="text/javascript">
-var socket = new WebSocket('ws://' + window.location.host + '/mj');
+var uuid = 0;
+$.ajax({
+	url : '/user/uuid',
+	type : 'post',
+	async: false,//使用同步的方式,true为异步方式
+	data : {'client':'mj'},
+	success : function(response){
+	    if(response.code == 1) {
+	    	uuid = response.data.uuid;
+	    	signal();
+	    } else {
+	    	alert(response.msg);
+	    	window.location.href="/play/login";
+	    }
+	}
+});
+//定义麻将游戏数据结构
+var param   = {
+	code : 0,   //标记
+	data : null    //具体数据结构
+}
+function signal(){
+	var socket = new WebSocket('ws://' + window.location.host + '/mj');
+	
 
-//Add an event listener for when a connection is open
-socket.onopen = function() {
-     console.log('WebSocket connection opened. Ready to send messages.');
-    // Send a message to the server
-     socket.send('Hello, from WebSocket client!');
-};
+	//Add an event listener for when a connection is open
+	socket.onopen = function() {
+	     console.log('WebSocket connection opened. Ready to send messages.');
+	     //step1,用户注册
+	     param.code = 1;
+	     param.data = uuid;
+	     var data = JSON.stringify(param);
+	     socket.send(data);
+	};
 
-//Add an event listener for when a message is received from the server
-socket.onmessage = function(message) {
-console.log('Message received from server: ' + message);
-};
+	//Add an event listener for when a message is received from the server
+	socket.onmessage = function(message) {
+	    
+	};
+}
+
 </script>

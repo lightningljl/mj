@@ -1,6 +1,7 @@
 package com.tools;
 
-import java.util.ArrayList;
+
+import java.util.Map;
 
 /**
  * 统一返回给前端的类
@@ -12,7 +13,7 @@ public class Response {
     //返回前端的消息
     private String msg;
     //返回前端的数据集合
-    private ArrayList data;
+    private Map data;
     
     public Response(int code, String msg) {
     	this.code = code;
@@ -31,10 +32,10 @@ public class Response {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-	public ArrayList getData() {
+	public Map getData() {
 		return data;
 	}
-	public void setData(ArrayList data) {
+	public void setData(Map data) {
 		this.data = data;
 	}
     
