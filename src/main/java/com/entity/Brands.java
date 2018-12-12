@@ -1,6 +1,8 @@
 package com.entity;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -17,7 +19,7 @@ public class Brands {
 	public int total = 108;
 	
 	//定义剩下的牌的数组，初始化时108
-	public Map<Integer, Integer> leave;
+	public List<Integer> leave;
 	
 	//定义用户手牌
 	public Hands[] hands;
@@ -28,28 +30,28 @@ public class Brands {
 	 */
 	public void init(int number) {
 		//打乱顺序,随机108张牌，模拟洗牌
-		leave = getSequence(total);
+		getSequence(total);
 		hands = new Hands[number];
-		for
+		for( int i=0; i<number; i++ ) {
+			//默认0是庄家
+			if(i==0) {
+				
+			}
+		}
 	}
 	
 	/**
 	 * 随机生成一定数量的牌，模拟洗牌
 	 * @param no int 生成数量
 	 */
-    public int[] getSequence(int no) {
-        int[] sequence = new int[no];
+    public void getSequence(int no) {
+    	leave = new ArrayList<Integer>(no);
         for(int i = 0; i < no; i++){
-            sequence[i] = i;
+        	leave.add(i);
         }
-        Random random = new Random();
-        for(int i = 0; i < no; i++){
-            int p = random.nextInt(no);
-            int tmp = sequence[i];
-            sequence[i] = sequence[p];
-            sequence[p] = tmp;
-        }
-        random = null;
-        return sequence;
+        //洗牌
+        Collections.shuffle(leave);
+        //多洗一次
+        Collections.shuffle(leave);
     }
 }

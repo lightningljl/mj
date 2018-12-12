@@ -11,8 +11,6 @@ public class Room {
     public int[] money;
     //各项配置
     public HashMap<String, String> config;
-    //各个用户的当前手牌数据结构,与上面的player一一对应
-    public HashMap<String, int[][]>[] hands;
     //给房价追加用户
     public Room(int id) {
     	this.id = id;
