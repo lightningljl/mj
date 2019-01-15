@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class Brands {
     /**
-                 * 定义麻将数据类型，二位
+     * 定义麻将数据类型，二位
      *0代表筒,1代表条,2代表万
      */
 	public int[][] mj = {{4,4,4,4,4,4,4,4,4},{4,4,4,4,4,4,4,4,4},{4,4,4,4,4,4,4,4,4}};
@@ -33,10 +33,22 @@ public class Brands {
 		getSequence(total);
 		hands = new Hands[number];
 		for( int i=0; i<number; i++ ) {
+			//第一个人摸14张排，第一个以后的人摸13张排
+			int iniNumber = i== 0? 14 : 13;
 			//默认0是庄家
-			if(i==0) {
-				
-			}
+			touch(i, iniNumber);
+		}
+	}
+	
+	/**
+	 * 摸牌方法
+	 * @param int key 第几个用户
+	 * @param int number 就是摸几张牌
+	 */
+	public void touch(int key, int number) {
+		for( int i=0; i<number; i++ ) {
+			hands[key].card.add(leave.get(i));
+			leave.remove(i);
 		}
 	}
 	

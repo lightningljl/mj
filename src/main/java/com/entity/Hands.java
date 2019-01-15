@@ -1,18 +1,23 @@
 package com.entity;
 
+import java.util.List;
+
 /**
    *  手牌类
  */
 public class Hands {
     /**
-                 * 没摸牌的初始化手牌
+     * 没摸牌的初始化手牌
      */
 	public int[][] brand = {{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0}};
-	
+	/**
+	 * 用户手牌，一纬
+	 */
+	public List<Integer> card;
 	/**
 	   * 用户出牌
 	 */
-	public int[][] play = {};
+	public List<Integer> play;
 	
 	/**
 	  * 用户碰牌
