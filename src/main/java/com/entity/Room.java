@@ -9,20 +9,46 @@ public class Room {
 	//初始化手牌
 	public Brands brands;
 	//标记用户ID
-	public Map<String, Player> map;
+	public Player[] player;
     //标记用户当前的money,初始化时，每个用户都需要上交
     public int[] money;
     //初始化用户数量
-    public int number;
-    //初始化积分纬度
-    
+    public int userNumber;
+    //初始化准备数量
+    public int readerNum = 0;
+    //是否开始
+    public int start = 0;
     //各项配置
     public HashMap<String, String> config;
     //给房价追加用户
     public Room(int id, int pnumber) {
     	this.id = id;
     	brands = new Brands();
-    	map = new HashMap<String, Player>();
-    	number = pnumber;
+    	player = new Player[pnumber];
+    	userNumber = pnumber;
+    }
+    
+    //准备
+    public int reader(int key) {
+    	int canStart = 0;
+    	player[key].ready = 1;
+    	readerNum++;
+    	if(readerNum == userNumber) {
+    		canStart = 1;
+    	}
+    	return canStart;
+    }
+    
+    //进入房间,创建房间的人会第一个进入，因此庄家的ID永远为0
+    public int addClient(String uid, String name, String avatar, int master) {
+    	Player newPlayer = new Player(uid, name, avatar, master);
+    	//判断当前用户数量
+    	int number = player.length;
+    	//如果达到的上限值
+    	if(number>=userNumber) {
+    		return 0;
+    	}
+    	player[number] = newPlayer;
+    	return 1;
     }
 }
