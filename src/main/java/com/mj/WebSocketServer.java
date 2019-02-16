@@ -15,8 +15,11 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.dao.RoomDao;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tools.Response;
@@ -28,6 +31,8 @@ import com.tools.Response;
 @ServerEndpoint(value = "/mj")
 @Component
 public class WebSocketServer {
+	@Autowired
+	public JdbcTemplate jdbcTemplate;
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
     //concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
@@ -49,8 +54,7 @@ public class WebSocketServer {
         ObjectMapper mapper = new ObjectMapper();
         log.info("有新连接加入！当前在线人数为" + getOnlineCount());
         try {
-        	 String message = mapper.writeValueAsString(response); //返回字符串
-        	 sendMessage(message);
+        	 sendMessage(response);
         } catch (IOException e) {
             log.error("websocket IO异常");
         }
@@ -98,10 +102,22 @@ public class WebSocketServer {
                    sessions.put(uuid, session);
                    response.setCode(1);
                    response.setMsg("uuid同步成功");
-	               String responseMessage = mapper.writeValueAsString(response); //返回字符串
-	               sendMessage(responseMessage);
+	               sendMessage(response);
 	               break;
+	           //创建房间
     	       case(2):
+    	    	   //先在数据库中创建房间
+    	    	   RoomDao dao = new RoomDao(jdbcTemplate);
+    	           //获取单场的基础价格
+    	           String amount = maps.get("amount").toString();
+    	           int roomId = dao.insert(amount);
+    	           if(roomId > 0) {
+    	        	   response.setCode(1);
+                       response.setMsg(String.valueOf(roomId));
+    	           }else {
+    	        	   response.setMsg("房间创建失败");
+    	           }
+	               sendMessage(response);
     	    	   log.info("操作步骤二");
     	    	   break;
     	    }
@@ -123,7 +139,9 @@ public class WebSocketServer {
     }
  
  
-    public void sendMessage(String message) throws IOException {
+    public void sendMessage(Response response ) throws IOException {
+    	ObjectMapper mapper = new ObjectMapper(); 
+    	String message = mapper.writeValueAsString(response);
         this.session.getBasicRemote().sendText(message);
     }
  
@@ -133,13 +151,13 @@ public class WebSocketServer {
      * */
     public static void sendInfo(String message) throws IOException {
     	//log.info(message);
-        for (WebSocketServer item : webSocketSet) {
-            try {
-                item.sendMessage(message);
-            } catch (IOException e) {
-                continue;
-            }
-        }
+//        for (WebSocketServer item : webSocketSet) {
+//            try {
+//                item.sendMessage(message);
+//            } catch (IOException e) {
+//                continue;
+//            }
+//        }
     }
  
     public static synchronized int getOnlineCount() {

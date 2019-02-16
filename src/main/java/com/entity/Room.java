@@ -16,8 +16,8 @@ public class Room {
     public int userNumber;
     //初始化准备数量
     public int readerNum = 0;
-    //是否开始
-    public int start = 0;
+    //当前房间状态，0等待状态,1打牌当中
+    public int status = 0;
     //各项配置
     public HashMap<String, String> config;
     //给房价追加用户
@@ -49,6 +49,18 @@ public class Room {
     		return 0;
     	}
     	player[number] = newPlayer;
+    	return 1;
+    }
+    
+    /**
+                  * 开牌，初始化，
+     */
+    public int licensing() {
+    	//如果准备人数和玩家人数不匹配，则失败
+    	if(readerNum!=userNumber) {
+    		return 0;
+    	}
+    	brands.init(userNumber);
     	return 1;
     }
 }
