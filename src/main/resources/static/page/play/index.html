@@ -7,7 +7,7 @@
 </head>
 <body>
 哈哈哈
-<a href="javascript:;">创建房间</a>
+<a id="create-room" href="javascript:;">创建房间</a>
 </body>
 </html>
 <script type="text/javascript">
@@ -48,8 +48,27 @@ function signal(){
 
 	//Add an event listener for when a message is received from the server
 	socket.onmessage = function(message) {
-	    
+	     //解析message中的数据，判断类型
 	};
+	
+	
+	//页面上操作主体方法
+	//step1创建房间
+	$("#create-room").click(function(){
+		param.code = 2;
+		//先默认基础价格为1元
+		//初始化参数 people代表玩的人数
+		//amount代表玩的金额
+	    param.data = {
+			people : 3, 
+			amount : 1
+		};
+	    var data = JSON.stringify(param);
+	    socket.send(data);
+	});
 }
+
+
+
 
 </script>

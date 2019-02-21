@@ -1,11 +1,14 @@
 package com.mj;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
- 
+
+import javax.servlet.http.HttpSession;
+import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -15,24 +18,26 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.dao.RoomDao;
+import com.entity.Room;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tools.Response;
  
-
-
-
 //@ServerEndpoint("/websocket/{user}")
 @ServerEndpoint(value = "/mj")
 @Component
 public class WebSocketServer {
-	@Autowired
-	public JdbcTemplate jdbcTemplate;
+	
+    private RedisTemplate<String, Serializable> redisTemplate;
+	
+    private JdbcTemplate jdbcTemplate;
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
     //concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
@@ -43,15 +48,22 @@ public class WebSocketServer {
     private Session session;
     
     private static Hashtable<String, Object> sessions = new Hashtable<>();
+    
+    //网页会话
+ 	private HttpSession httpSession;
  
     /**
      * 连接建立成功调用的方法*/
     @OnOpen
-    public void onOpen(Session session) {
+    public void onOpen(Session session, EndpointConfig config) {
         this.session = session;
+        this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
         addOnlineCount();           //在线数加1
         Response response = new Response(1, "连接成功");
-        ObjectMapper mapper = new ObjectMapper();
+        AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("database.xml");
+		jdbcTemplate = (JdbcTemplate) ctx.getBean("JdbcTemplateOne");
+		redisTemplate = (RedisTemplate<String, Serializable>) ctx.getBean("redisTemplate");
+		//ctx.close();
         log.info("有新连接加入！当前在线人数为" + getOnlineCount());
         try {
         	 sendMessage(response);
@@ -93,6 +105,8 @@ public class WebSocketServer {
     	    //HashMap jsonMap = mapper.readValue(message, HashMap.class);  
     	    Map<String, Object> maps = mapper.readValue(message, Map.class); 
     	    String thisCode = maps.get("code").toString();
+    	    //设置返回的方法，用以前端判断
+    	    response.setFid(thisCode);
     	    log.info("得到的uuid:"+thisCode);
     	    int code = Integer.parseInt(thisCode);
     	    switch(code) {
@@ -109,9 +123,21 @@ public class WebSocketServer {
     	    	   //先在数据库中创建房间
     	    	   RoomDao dao = new RoomDao(jdbcTemplate);
     	           //获取单场的基础价格
-    	           String amount = maps.get("amount").toString();
-    	           int roomId = dao.insert(amount);
+    	           Room room = (Room)maps.get("data");
+    	           //通过金额和人数来创建房间
+    	           int roomId = dao.insert(String.valueOf(room.amount),String.valueOf(room.people));
     	           if(roomId > 0) {
+    	        	   //进行房间初始化,将当前用户加入房间
+    	        	   Map user = (Map)httpSession.getAttribute("user");
+    	        	   //添加东家
+    	        	   String userId = user.get("user_id").toString();
+    	        	   String name  = user.get("nick").toString();
+    	        	   String avatar  = user.get("avatar").toString();
+    	        	   room.addClient(userId, name, avatar, 1);
+    	        	   //将房间信息存入redis,并跳转
+    	        	   ObjectMapper roomMapper = new ObjectMapper();
+    	               String roomJson = mapper.writeValueAsString(room);
+    	        	   redisTemplate.opsForValue().set("room_"+String.valueOf(roomId), roomJson);
     	        	   response.setCode(1);
                        response.setMsg(String.valueOf(roomId));
     	           }else {

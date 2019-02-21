@@ -3,6 +3,11 @@ package com.entity;
 import java.util.HashMap;
 import java.util.Map;
 
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class Room {
 	//房间ID
 	public int id;
@@ -13,7 +18,9 @@ public class Room {
     //标记用户当前的money,初始化时，每个用户都需要上交
     public int[] money;
     //初始化用户数量
-    public int userNumber;
+    public int people;
+    //初始化基础金额，一番
+    public int amount;
     //初始化准备数量
     public int readerNum = 0;
     //当前房间状态，0等待状态,1打牌当中
@@ -25,7 +32,7 @@ public class Room {
     	this.id = id;
     	brands = new Brands();
     	player = new Player[pnumber];
-    	userNumber = pnumber;
+    	people = pnumber;
     }
     
     //准备
@@ -33,7 +40,7 @@ public class Room {
     	int canStart = 0;
     	player[key].ready = 1;
     	readerNum++;
-    	if(readerNum == userNumber) {
+    	if(readerNum == people) {
     		canStart = 1;
     	}
     	return canStart;
@@ -45,7 +52,7 @@ public class Room {
     	//判断当前用户数量
     	int number = player.length;
     	//如果达到的上限值
-    	if(number>=userNumber) {
+    	if(number>=people) {
     		return 0;
     	}
     	player[number] = newPlayer;
@@ -57,10 +64,10 @@ public class Room {
      */
     public int licensing() {
     	//如果准备人数和玩家人数不匹配，则失败
-    	if(readerNum!=userNumber) {
+    	if(readerNum!=people) {
     		return 0;
     	}
-    	brands.init(userNumber);
+    	brands.init(people);
     	return 1;
     }
 }

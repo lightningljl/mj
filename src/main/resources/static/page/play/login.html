@@ -25,7 +25,7 @@ $(function(){
 			Password: $.md5(password)
 		}, function(response){
 			if(response.code == 1){
-				window.location.reload="/play/index";
+				window.location.href="/play/index";
 			} else {
 				alert(response.msg);
 			}

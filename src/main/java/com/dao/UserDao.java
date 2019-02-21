@@ -48,4 +48,19 @@ public class UserDao extends Dao {
 		}
 		return null;
 	}
+	
+	/**
+	 * 通过用户ID查询用户信息
+	 */
+	public Map inquire(String id) {
+		String sql = "SELECT user_id,account,nick,gender,avatar FROM "+table+" where user_id="+id;
+		try {
+			Map  map = jdbcTemplate.queryForMap(sql);
+			return map;
+		} catch(Exception e) {
+			//记录没有查询出用户
+			logger.info("用户ID"+id+"用户查询失败!"+e.getMessage());
+		}
+		return null;
+	}
 }

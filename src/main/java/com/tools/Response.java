@@ -14,10 +14,21 @@ public class Response {
     private String msg;
     //返回前端的数据集合
     private Map data;
+    //返回的方法ID
+    private String fid;
     
-    public Response(int code, String msg) {
+    public String getFid() {
+		return fid;
+	}
+
+	public void setFid(String fid) {
+		fid = fid;
+	}
+
+	public Response(int code, String msg) {
     	this.code = code;
     	this.msg  = msg;
+    	this.fid = "0";
     }
     
 	public int getCode() {
