@@ -112,6 +112,8 @@ public class WebSocketServer {
     	    switch(code) {
     	       //存储uuid
     	       case(1):
+    	    	   System.out.println("用户session");
+    	    	   System.out.println(httpSession);
     	    	   String uuid = maps.get("data").toString();
                    sessions.put(uuid, session);
                    response.setCode(1);
@@ -123,12 +125,15 @@ public class WebSocketServer {
     	    	   //先在数据库中创建房间
     	    	   RoomDao dao = new RoomDao(jdbcTemplate);
     	           //获取单场的基础价格
-    	           Room room = (Room)maps.get("data");
+    	           Map config = (Map)maps.get("data");
+    	           String amount = config.get("amount").toString();
+    	           String people = config.get("people").toString();
     	           //通过金额和人数来创建房间
-    	           int roomId = dao.insert(String.valueOf(room.amount),String.valueOf(room.people));
+    	           int roomId = dao.insert(amount,people);
     	           if(roomId > 0) {
     	        	   //进行房间初始化,将当前用户加入房间
     	        	   Map user = (Map)httpSession.getAttribute("user");
+    	        	   Room room = new Room(roomId,  Integer.parseInt(people));
     	        	   //添加东家
     	        	   String userId = user.get("user_id").toString();
     	        	   String name  = user.get("nick").toString();
