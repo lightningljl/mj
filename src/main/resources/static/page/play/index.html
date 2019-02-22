@@ -11,6 +11,12 @@
 </body>
 </html>
 <script type="text/javascript">
+//定义麻将游戏数据结构
+var param   = {
+	code : 0,   //标记
+	uid  : 0,
+	data : null    //具体数据结构
+}
 var uuid = 0;
 $.ajax({
 	url : '/user/uuid',
@@ -20,6 +26,7 @@ $.ajax({
 	success : function(response){
 	    if(response.code == 1) {
 	    	uuid = response.data.uuid;
+	    	param.uid = uuid;
 	    	signal();
 	    } else {
 	    	alert(response.msg);
@@ -27,11 +34,7 @@ $.ajax({
 	    }
 	}
 });
-//定义麻将游戏数据结构
-var param   = {
-	code : 0,   //标记
-	data : null    //具体数据结构
-}
+
 function signal(){
 	var socket = new WebSocket('ws://' + window.location.host + '/mj');
 	

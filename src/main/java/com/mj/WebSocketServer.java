@@ -49,15 +49,13 @@ public class WebSocketServer {
     
     private static Hashtable<String, Object> sessions = new Hashtable<>();
     
-    //网页会话
- 	private HttpSession httpSession;
  
     /**
      * 连接建立成功调用的方法*/
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
+    	 log.info("user:{}", config.getUserProperties().get("user"));
         this.session = session;
-        this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
         addOnlineCount();           //在线数加1
         Response response = new Response(1, "连接成功");
         AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("database.xml");
@@ -105,6 +103,8 @@ public class WebSocketServer {
     	    //HashMap jsonMap = mapper.readValue(message, HashMap.class);  
     	    Map<String, Object> maps = mapper.readValue(message, Map.class); 
     	    String thisCode = maps.get("code").toString();
+    	    //用户ID
+    	    String uid   = maps.get("uid").toString();
     	    //设置返回的方法，用以前端判断
     	    response.setFid(thisCode);
     	    log.info("得到的uuid:"+thisCode);
@@ -112,8 +112,6 @@ public class WebSocketServer {
     	    switch(code) {
     	       //存储uuid
     	       case(1):
-    	    	   System.out.println("用户session");
-    	    	   System.out.println(httpSession);
     	    	   String uuid = maps.get("data").toString();
                    sessions.put(uuid, session);
                    response.setCode(1);
@@ -131,6 +129,8 @@ public class WebSocketServer {
     	           //通过金额和人数来创建房间
     	           int roomId = dao.insert(amount,people);
     	           if(roomId > 0) {
+    	        	   //用户信息读取
+    	        	   
     	        	   //进行房间初始化,将当前用户加入房间
     	        	   Map user = (Map)httpSession.getAttribute("user");
     	        	   Room room = new Room(roomId,  Integer.parseInt(people));
