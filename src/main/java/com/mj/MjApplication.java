@@ -33,10 +33,10 @@ public class MjApplication {
         return dataSource;
     }
     
-//    @Bean
-//    public ServerEndpointExporter serverEndpointExporter() {
-//        return new ServerEndpointExporter();
-//    }
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
 	public static void main(String[] args) {
 		SpringApplication.run(MjApplication.class, args);
 	}

@@ -22,7 +22,7 @@ public class Response {
 	}
 
 	public void setFid(String fid) {
-		fid = fid;
+		this.fid = fid;
 	}
 
 	public Response(int code, String msg) {

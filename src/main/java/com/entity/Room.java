@@ -27,6 +27,8 @@ public class Room {
     public int status = 0;
     //各项配置
     public HashMap<String, String> config;
+    //当前进入人的数量
+    public int calcNumber = 0;
     //给房价追加用户
     public Room(int id, int pnumber) {
     	this.id = id;
@@ -50,12 +52,13 @@ public class Room {
     public int addClient(String uid, String name, String avatar, int master) {
     	Player newPlayer = new Player(uid, name, avatar, master);
     	//判断当前用户数量
-    	int number = player.length;
+    	System.out.println("当前用户数量:"+String.valueOf(calcNumber));
     	//如果达到的上限值
-    	if(number>=people) {
+    	if(calcNumber>=people) {
     		return 0;
     	}
-    	player[number] = newPlayer;
+    	player[calcNumber] = newPlayer;
+    	calcNumber++;
     	return 1;
     }
     

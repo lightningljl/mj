@@ -2,12 +2,11 @@ package com.mj;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import javax.servlet.http.HttpSession;
+
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -25,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.dao.RoomDao;
+import com.dao.UserDao;
 import com.entity.Room;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +52,8 @@ public class WebSocketServer {
  
     /**
      * 连接建立成功调用的方法*/
-    @OnOpen
+    @SuppressWarnings("unchecked")
+	@OnOpen
     public void onOpen(Session session, EndpointConfig config) {
     	 log.info("user:{}", config.getUserProperties().get("user"));
         this.session = session;
@@ -105,6 +106,10 @@ public class WebSocketServer {
     	    String thisCode = maps.get("code").toString();
     	    //用户ID
     	    String uid   = maps.get("uid").toString();
+    	    //当前用户初始化
+    	    //用户信息读取
+     	    UserDao userdao = new UserDao(jdbcTemplate);
+    	    Map user = userdao.inquire(uid);
     	    //设置返回的方法，用以前端判断
     	    response.setFid(thisCode);
     	    log.info("得到的uuid:"+thisCode);
@@ -129,18 +134,20 @@ public class WebSocketServer {
     	           //通过金额和人数来创建房间
     	           int roomId = dao.insert(amount,people);
     	           if(roomId > 0) {
-    	        	   //用户信息读取
-    	        	   
     	        	   //进行房间初始化,将当前用户加入房间
-    	        	   Map user = (Map)httpSession.getAttribute("user");
     	        	   Room room = new Room(roomId,  Integer.parseInt(people));
     	        	   //添加东家
     	        	   String userId = user.get("user_id").toString();
     	        	   String name  = user.get("nick").toString();
     	        	   String avatar  = user.get("avatar").toString();
-    	        	   room.addClient(userId, name, avatar, 1);
+    	        	   int enterRoom = room.addClient(userId, name, avatar, 1);
+    	        	   if(enterRoom == 0) {
+    	        		   response.setMsg("人数超过限制，加入失败");
+    	        		   sendMessage(response);
+    	        		   break;
+    	        	   } 
+    	        	   System.out.println(room.player[0].nickName);
     	        	   //将房间信息存入redis,并跳转
-    	        	   ObjectMapper roomMapper = new ObjectMapper();
     	               String roomJson = mapper.writeValueAsString(room);
     	        	   redisTemplate.opsForValue().set("room_"+String.valueOf(roomId), roomJson);
     	        	   response.setCode(1);
@@ -150,6 +157,25 @@ public class WebSocketServer {
     	           }
 	               sendMessage(response);
     	    	   log.info("操作步骤二");
+    	    	   break;
+    	    	 //进入房间
+    	       case(3):
+    	    	   //先在数据库中创建房间
+    	    	   RoomDao daoEnter = new RoomDao(jdbcTemplate);
+    	           Map dataEnter = (Map)maps.get("data");
+	               String xx = dataEnter.get("room_id").toString();
+	    	     //进行房间初始化,将当前用户加入房间
+	        	   Room room = new Room(roomId,  Integer.parseInt(people));
+	        	   //添加东家
+	        	   String userId = user.get("user_id").toString();
+	        	   String name  = user.get("nick").toString();
+	        	   String avatar  = user.get("avatar").toString();
+	        	   int enterRoom = room.addClient(userId, name, avatar, 1);
+	        	   if(enterRoom == 0) {
+	        		   response.setMsg("人数超过限制，加入失败");
+	        		   sendMessage(response);
+	        		   break;
+	        	   } 
     	    	   break;
     	    }
     	} catch (Exception e) {  
