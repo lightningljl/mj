@@ -31,6 +31,11 @@ public class Player {
 	 */
 	public int master = 0;
 	
+	/*
+	 * 用户的排序
+	 */
+	public int sort = 0;
+	
 	/**
 	 * 
 	 * @param thisUid

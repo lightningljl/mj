@@ -197,6 +197,11 @@ public class WebSocketServer {
     	}
     	return response;
     }
+    
+    /**
+     * 方法4
+     * 准备
+     */
  
 	/**
 	 * 
