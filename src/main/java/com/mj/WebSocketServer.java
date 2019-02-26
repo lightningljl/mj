@@ -49,6 +49,7 @@ public class WebSocketServer {
     
     private static Hashtable<String, Object> sessions = new Hashtable<>();
     
+    
  
     /**
      * 连接建立成功调用的方法*/
@@ -106,6 +107,8 @@ public class WebSocketServer {
     	    String thisCode = maps.get("code").toString();
     	    //用户ID
     	    String uid   = maps.get("uid").toString();
+    	    //获取data中的数据
+    	    Map data = (Map)maps.get("data");
     	    //当前用户初始化
     	    //用户信息读取
      	    UserDao userdao = new UserDao(jdbcTemplate);
@@ -128,9 +131,8 @@ public class WebSocketServer {
     	    	   //先在数据库中创建房间
     	    	   RoomDao dao = new RoomDao(jdbcTemplate);
     	           //获取单场的基础价格
-    	           Map config = (Map)maps.get("data");
-    	           String amount = config.get("amount").toString();
-    	           String people = config.get("people").toString();
+    	           String amount = data.get("amount").toString();
+    	           String people = data.get("people").toString();
     	           //通过金额和人数来创建房间
     	           int roomId = dao.insert(amount,people);
     	           if(roomId > 0) {
@@ -161,27 +163,39 @@ public class WebSocketServer {
     	    	 //进入房间
     	       case(3):
     	    	   //先在数据库中创建房间
-    	    	   RoomDao daoEnter = new RoomDao(jdbcTemplate);
-    	           Map dataEnter = (Map)maps.get("data");
-	               String xx = dataEnter.get("room_id").toString();
-	    	     //进行房间初始化,将当前用户加入房间
-	        	   Room room = new Room(roomId,  Integer.parseInt(people));
-	        	   //添加东家
-	        	   String userId = user.get("user_id").toString();
-	        	   String name  = user.get("nick").toString();
-	        	   String avatar  = user.get("avatar").toString();
-	        	   int enterRoom = room.addClient(userId, name, avatar, 1);
-	        	   if(enterRoom == 0) {
-	        		   response.setMsg("人数超过限制，加入失败");
-	        		   sendMessage(response);
-	        		   break;
-	        	   } 
+    	    	   Response thisResponse = enterRoom(data.get("room_id").toString(), user);
+	        	   sendMessage(thisResponse);
+    	    	   break;
+    	        //准备
+    	       case(4):
+    	    	   
     	    	   break;
     	    }
     	} catch (Exception e) {  
     		log.error("操作失败");
     	    e.printStackTrace();  
     	}  
+    }
+    
+    /**
+     *  方法3
+     *  进入房间
+     */
+    public Response enterRoom(String roomId, Map user) {
+    	Response response = new Response(0, "进入房间失败");
+    	Room room  = (Room)redisTemplate.opsForValue().get("room_"+roomId);
+    	//添加东家
+ 	    String userId = user.get("user_id").toString();
+ 	    String name  = user.get("nick").toString();
+ 	    String avatar  = user.get("avatar").toString();
+    	int result = room.addClient(userId, name, avatar, 0);
+    	if(result > 0) {
+    		response.setCode(1);
+    		response.setMsg("加入成功");
+    	} else {
+    		response.setMsg("房间人数超过限制");
+    	}
+    	return response;
     }
  
 	/**
