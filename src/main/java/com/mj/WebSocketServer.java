@@ -25,8 +25,10 @@ import org.springframework.stereotype.Component;
 
 import com.dao.RoomDao;
 import com.dao.UserDao;
+import com.entity.Player;
 import com.entity.Room;
 import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tools.Response;
  
@@ -149,9 +151,9 @@ public class WebSocketServer {
     	        		   break;
     	        	   } 
     	        	   System.out.println(room.player[0].nickName);
+    	        	   //存储room信息
+    	        	   storage(room);
     	        	   //将房间信息存入redis,并跳转
-    	               String roomJson = mapper.writeValueAsString(room);
-    	        	   redisTemplate.opsForValue().set("room_"+String.valueOf(roomId), roomJson);
     	        	   response.setCode(1);
                        response.setMsg(String.valueOf(roomId));
     	           }else {
@@ -168,7 +170,9 @@ public class WebSocketServer {
     	    	   break;
     	        //准备
     	       case(4):
-    	    	   
+    	    	   //先获取用户信息
+    	    	   Response readerResponse = reader(data.get("room_id").toString(), uid);
+        	       sendMessage(readerResponse);
     	    	   break;
     	    }
     	} catch (Exception e) {  
@@ -190,6 +194,8 @@ public class WebSocketServer {
  	    String avatar  = user.get("avatar").toString();
     	int result = room.addClient(userId, name, avatar, 0);
     	if(result > 0) {
+    		//存储房间
+    		storage(room);
     		response.setCode(1);
     		response.setMsg("加入成功");
     	} else {
@@ -202,6 +208,39 @@ public class WebSocketServer {
      * 方法4
      * 准备
      */
+    public Response reader(String uid, String roomId) {
+    	Response response = new Response(0, "准备失败");
+    	Room room  = (Room)redisTemplate.opsForValue().get("room_"+roomId);
+    	//查找用户
+    	Player player = room.inquirePlayer(uid);
+    	int canStart = room.reader(player.sort);
+    	//如果都准备了，直接初始化麻将
+    	if(canStart == 1) {
+    		int init = room.licensing();
+    		if(init == 0) {
+    			return response;
+    		}
+    		response.setCode(1);
+    		response.setMsg("准备成功");
+    		storage(room);
+    	}
+    	return response;
+    }
+    
+    /**
+     * 存储房间
+     */
+    public void storage(Room room) {
+    	 ObjectMapper mapper = new ObjectMapper();
+    	 String roomJson = "";
+		 try {
+			 roomJson = mapper.writeValueAsString(room);
+			 redisTemplate.opsForValue().set("room_"+String.valueOf(room.id), roomJson);
+		 } catch (JsonProcessingException e) {
+			 System.out.println("房间信息存储失败"+roomJson);
+			 e.printStackTrace();
+		 }
+    }
  
 	/**
 	 * 
