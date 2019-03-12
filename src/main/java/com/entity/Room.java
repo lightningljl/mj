@@ -13,7 +13,7 @@ public class Room {
 	public int id;
 	//初始化手牌
 	public Brands brands;
-	//标记用户ID
+	//标记用户信息
 	public Player[] player;
     //标记用户当前的money,初始化时，每个用户都需要上交
     public int[] money;
@@ -57,13 +57,36 @@ public class Room {
     	if(calcNumber>=people) {
     		return 0;
     	}
+    	newPlayer.sort = calcNumber;
     	player[calcNumber] = newPlayer;
     	calcNumber++;
     	return 1;
     }
     
     /**
-                  * 开牌，初始化，
+     * 通过用户ID返回当前用户
+     */
+    public Player inquirePlayer( String userId ) {
+    	Player user = null;
+    	for(int i=0;i<calcNumber;i++){
+    		if(player[i].uid.equals(userId)) {
+    			user = player[i];
+    			break;
+    		}
+    	}
+    	return user;
+    }
+    
+    /**
+     * 设置用户数据
+     */
+    public void setPlayer(Player user) {
+    	int key = user.sort;
+    	player[key] = user;
+    }
+    
+    /**
+     * 开牌，初始化，
      */
     public int licensing() {
     	//如果准备人数和玩家人数不匹配，则失败
