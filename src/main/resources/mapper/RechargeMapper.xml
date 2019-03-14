@@ -3,11 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mybatis.mapper.RechargeMapper">
-    <resultMap id="BaseResultMap" type="com.mybatis.domain.Recharge" >
-        <result column="province_id" property="provinceId" />
-        <result column="city_name" property="cityName" />
+    <resultMap id="BaseResultMap" type="com.mybatis.entity.Recharge" >
+        <id property="id" column="id" />
+        <result column="amount" property="amount" />
+        <result column="user_id" property="userId" />
+        <result column="created_time" property="createdTime" />
     </resultMap>
     <select id="inquire" resultMap="BaseResultMap">
-        select * from city where province_id = #{provinceId}
+        select id,amount,user_id,created_time from recharge where id = #{id}
     </select>
 </mapper>
