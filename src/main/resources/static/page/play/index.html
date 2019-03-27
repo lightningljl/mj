@@ -36,7 +36,7 @@ $.ajax({
 });
 
 function signal(){
-	var socket = new WebSocket('ws://' + window.location.host + '/mj');
+	var socket = new WebSocket('ws://127.0.0.1:8889/ws');
 	
 
 	//Add an event listener for when a connection is open

@@ -31,10 +31,11 @@ import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tools.Response;
- 
+
+//废弃，采用最新的netty集成websocket
 //@ServerEndpoint("/websocket/{user}")
-@ServerEndpoint(value = "/mj")
-@Component
+//@ServerEndpoint(value = "/mj")
+//@Component
 public class WebSocketServer {
 	
     private RedisTemplate<String, Serializable> redisTemplate;

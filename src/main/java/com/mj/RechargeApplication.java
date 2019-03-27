@@ -1,5 +1,8 @@
 package com.mj;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.springframework.http.MediaType;
@@ -27,6 +30,9 @@ public class RechargeApplication {
 		Response response = new Response(0, "注册失败");
 		Recharge detail = rechargeService.inquire(1);
 		System.out.println(detail.getAmount());
+		Map<String, String> xx = new HashMap<String, String>();
+		xx.put("", "helloworld");
+		xx.remove("");
 		return response;
 	}
 }

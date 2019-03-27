@@ -4,6 +4,8 @@ import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,12 +14,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
+import com.mj.websocket.NettyServer;
+
 @SpringBootApplication
 @MapperScan("com.mybatis.mapper")
 @ComponentScan({"com.mj","com.mybatis.service"})
 public class MjApplication {
 	@Autowired
     private Environment env;
+	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Bean
     public DataSource dataSource() {
@@ -37,11 +43,18 @@ public class MjApplication {
         return dataSource;
     }
     
-    @Bean
-    public ServerEndpointExporter serverEndpointExporter() {
-        return new ServerEndpointExporter();
-    }
+//    @Bean
+//    public ServerEndpointExporter serverEndpointExporter() {
+//        return new ServerEndpointExporter();
+//    }
 	public static void main(String[] args) {
 		SpringApplication.run(MjApplication.class, args);
+		try {
+			new NettyServer(8889).start();
+		} catch (Exception e) {
+			System.out.println("websocket 启动失败'");
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
