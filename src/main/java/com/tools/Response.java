@@ -3,6 +3,9 @@ package com.tools;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * 统一返回给前端的类
  */
@@ -48,6 +51,17 @@ public class Response {
 	}
 	public void setData(Map data) {
 		this.data = data;
+	}
+	
+	public String toString() {
+		ObjectMapper mapper = new ObjectMapper(); 
+		String message = "[\"code\":-1]";
+    	try {
+			message = mapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return message;
 	}
     
    

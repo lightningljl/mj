@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.RoomMapper">
+     <resultMap id="BaseResultMap" type="com.mybatis.entity.Room" >
+        <id property="id" column="id" />
+        <result column="master_id" property="masterId" />
+        <result column="amount" property="amount" />
+        <result column="people" property="people" />
+        <result column="content" property="content" />
+        <result column="created_at" property="createdAt" />
+    </resultMap>
+    <select id="inquire" resultMap="BaseResultMap">
+        select id,master_id,amount,people,content from room where id = #{id}
+    </select>
+    <!-- 插入记录 -->
+	<insert id="insert" parameterType="Object" useGeneratedKeys="true" keyProperty="room.id" keyColumn="id">
+		insert into
+		room(master_id,amount,people,content,created_at)
+		values(#{room.masterId},#{room.amount},#{room.people},#{room.content},#{room.createdAt})
+	</insert>
+</mapper>
