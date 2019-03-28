@@ -11,13 +11,17 @@ import com.dao.RoomDao;
 import com.entity.Room;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mybatis.entity.User;
 import com.mybatis.service.RechargeService;
 import com.mybatis.service.RoomService;
+import com.mybatis.service.UserService;
 
 public class Operate {
 	public RedisTemplate<String, Serializable> redisTemplate;
 	@Resource
     private RoomService roomService;
+	@Resource
+    private UserService userService;
 	
 	public Response create(Map data, String uid) {
          //获取单场的基础价格
@@ -25,28 +29,28 @@ public class Operate {
          int people = Integer.valueOf( data.get("people").toString() );
          //通过金额和人数来创建房间
          int roomId = roomService.insert(Integer.valueOf(uid), amount, people);
+         Response response = new Response(0, "房间创建失败");
          if(roomId > 0) {
       	   //进行房间初始化,将当前用户加入房间
-      	   Room room = new Room(roomId,  Integer.parseInt(people));
+      	   Room room = new Room(roomId, people);
+      	   //用户信息查询
+      	   User user = userService.inquire(Integer.valueOf(uid));
       	   //添加东家
-      	   String userId = user.get("user_id").toString();
-      	   String name  = user.get("nick").toString();
-      	   String avatar  = user.get("avatar").toString();
+      	   String userId =String.valueOf( user.getUserId() ) ;
+      	   String name  = user.getNick();
+      	   String avatar  = user.getAvatar();
       	   int enterRoom = room.addClient(userId, name, avatar, 1);
       	   if(enterRoom == 0) {
       		   response.setMsg("人数超过限制，加入失败");
-      		   sendMessage(response);
-      		   break;
+      		   return response;
       	   } 
-      	   System.out.println(room.player[0].nickName);
       	   //存储room信息
       	   storage(room);
       	   //将房间信息存入redis,并跳转
       	   response.setCode(1);
-             response.setMsg(String.valueOf(roomId));
-         }else {
-      	   response.setMsg("房间创建失败");
+           response.setMsg(String.valueOf(roomId));
          }
+         return response;
 	}
 	
 	public synchronized Response enterRoom(String roomId, Map user) {

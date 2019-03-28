@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.mapper.UserMapper">
+     <resultMap id="BaseResultMap" type="com.mybatis.entity.User" >
+        <id property="user_id" column="userId" />
+        <result column="account" property="account" />
+        <result column="phone" property="phone" />
+        <result column="nick" property="nick" />
+        <result column="gender" property="gender" />
+        <result column="avatar" property="avatar" />
+    </resultMap>
+    <select id="inquire" resultMap="BaseResultMap">
+        select user_id,account,phone,nick,gender,avatar from users where id = #{id}
+    </select>
+</mapper>

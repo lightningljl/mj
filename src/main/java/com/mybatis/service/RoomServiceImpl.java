@@ -2,9 +2,12 @@ package com.mybatis.service;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Service;
+
 import com.mybatis.entity.Room;
 import com.mybatis.mapper.RoomMapper;
 
+@Service
 public class RoomServiceImpl implements RoomService {
 	
 	@Resource
