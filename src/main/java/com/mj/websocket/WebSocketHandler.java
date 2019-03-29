@@ -22,6 +22,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
 	
 	public static Map<String, ChannelGroup> clientList = new ConcurrentHashMap<>();
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private static Operate operate = new Operate();
 	
 	@Autowired
 	public JdbcTemplate jdbcTemplate;
@@ -51,20 +52,22 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
 	    Map data = (Map)maps.get("data");
         int code = Integer.parseInt(thisCode);
         Response resp = new Response(1, "操作成功");
+        //初始化操作类
         switch(code){
-            //存储uuid
+            //存储用户信息到redis
 	        case(1):
+	        	 logger.info("action,用户:"+uid+"初始化连接");
+	        	 resp = operate.initUser(uid);
                  break;
                //创建房间
  	        case(2):
+ 	        	logger.info("action,用户:"+uid+"创建房间");
  	    	    //先在数据库中创建房间
- 	    	     Operate operate = new Operate();
  	             resp = operate.create(data, uid);
  	             //如果创建房间成功，则将房间ID作为key,加入chaanelGroup
  	             ChannelGroup group = new DefaultChannelGroup(ImmediateEventExecutor.INSTANCE);
  	             group.add(ctx.channel());
  	             clientList.put(resp.getData().toString(), group);
-	             logger.info("操作步骤二");
  	    	   break;
  	    	   //进入房间
  	        case(3):

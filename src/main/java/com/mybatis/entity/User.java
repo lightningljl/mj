@@ -24,4 +24,6 @@ public class User implements Serializable{
     private int gender;
     //用户头像
     private String avatar;
+    //用户房间号---注意，这个是非数据库字段
+    private String roomId;
 }
