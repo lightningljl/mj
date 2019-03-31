@@ -12,6 +12,7 @@ import org.redisson.config.Config;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.dao.RoomDao;
+import com.entity.Player;
 import com.entity.Room;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -91,19 +92,23 @@ public class Operate {
 	 * @param user
 	 * @return
 	 */
-	public Response enterRoom(String roomId, Map user) {
+	public Response enterRoom(String roomId, String uid) {
 		Response response = new Response(0, "进入房间失败");
 		//针对房间进行行锁
 		RLock lock = client.getLock("room_lock_"+roomId);
 		lock.lock();
 		//执行业务
     	Room room  = (Room)redisTemplate.opsForValue().get("room_"+roomId);
+    	User user = getUser(uid);
     	//添加东家
- 	    String userId = user.get("user_id").toString();
- 	    String name  = user.get("nick").toString();
- 	    String avatar  = user.get("avatar").toString();
+ 	    String userId = uid;
+ 	    String name  = user.getNick();
+ 	    String avatar  = user.getAvatar();
     	int result = room.addClient(userId, name, avatar, 0);
     	if(result > 0) {
+    		//存储用户所在的房间号
+    		user.setRoomId(String.valueOf(roomId));
+       	    storageUser(user);
     		//存储房间
     		storageRoom(room);
     		response.setCode(1);
@@ -115,6 +120,36 @@ public class Operate {
     	lock.unlock();
     	return response;
 	}
+	
+	/**
+	   * 准备方法
+	 * @param uid
+	 * @param roomId
+	 * @return
+	 */
+	public Response reader(String uid, String roomId) {
+    	Response response = new Response(0, "准备失败");
+    	//针对房间进行行锁
+		RLock lock = client.getLock("room_lock_"+roomId);
+		lock.lock();
+    	Room room  = (Room)redisTemplate.opsForValue().get("room_"+roomId);
+    	//查找用户
+    	Player player = room.inquirePlayer(uid);
+    	int canStart = room.reader(player.sort);
+    	//如果都准备了，直接初始化麻将
+    	if(canStart == 1) {
+    		int init = room.licensing();
+    		if(init == 0) {
+    			return response;
+    		}
+    		response.setCode(1);
+    		response.setMsg("准备成功");
+    		storageRoom(room);
+    	}
+    	//执行完毕，释放锁
+    	lock.unlock();
+    	return response;
+    }
 	
 	/**
      * 存储房间

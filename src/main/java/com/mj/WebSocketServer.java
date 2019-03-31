@@ -209,7 +209,7 @@ public class WebSocketServer {
      * 方法4
      * 准备
      */
-    public Response reader(String uid, String roomId) {
+    public Response reader(String roomId, String uid) {
     	Response response = new Response(0, "准备失败");
     	Room room  = (Room)redisTemplate.opsForValue().get("room_"+roomId);
     	//查找用户

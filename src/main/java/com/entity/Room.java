@@ -93,7 +93,12 @@ public class Room {
     	if(readerNum!=people) {
     		return 0;
     	}
-    	brands.init(people);
+    	//获取用户ID
+    	String[] uidList = new String[people];
+    	for(int i=0;i<people;i++) {
+    		uidList[i] = player[i].uid;
+    	}
+    	brands.init(people, uidList);
     	return 1;
     }
 }
