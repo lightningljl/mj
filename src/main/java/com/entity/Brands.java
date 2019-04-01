@@ -97,18 +97,36 @@ public class Brands {
      * 
      * @param unit 牌号
      * @param info 用户牌
-     * @return
+     * @return 默认0，没有胡牌，1代表胡牌了，1翻，以此类推
      */
-    public boolean win(int unit, Hands info) {
+    public int win(int unit, Hands info) {
     	//将还在手中的牌转为二维数组
     	//0代表筒，1代表条，2代表万
     	int number = info.play.size();
-    	int[][] thisBrands = new int[number][2];
+    	ArrayList thisBrands = new ArrayList();
     	for(int i=0; i<number; i++) {
     		int type = (int) Math.floor(info.play.get(i)/36);
     		int value = info.play.get(i)%36;
-    		
+    		int digit = (int) Math.ceil(value/4);
+    		thisBrands[type][] = type;
     	}
-    	return false;
+    	//继续判定用户手牌数量，如果为1，则判断新牌和手牌一样，则胡牌
+    	if(number == 1 && info.play.get(0) == unit) {
+    		//进一步判断番数
+    		return calc(unit, info);
+    	}
+    	//找到手牌中的将牌，然后判断
+    	
+    	return 0;
+    }
+    
+    /**
+                 * 胡牌后，判断有多少翻
+     * @param unit
+     * @param info
+     * @return
+     */
+    public int calc(int unit, Hands info) {
+    	return 1;
     }
 }
