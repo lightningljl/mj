@@ -3,9 +3,11 @@ package com.entity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /**
    * 手牌模型
@@ -100,15 +102,30 @@ public class Brands {
      * @return 默认0，没有胡牌，1代表胡牌了，1翻，以此类推
      */
     public int win(int unit, Hands info) {
+    	int cate = 3;
     	//将还在手中的牌转为二维数组
     	//0代表筒，1代表条，2代表万
     	int number = info.play.size();
-    	ArrayList thisBrands = new ArrayList();
+    	ArrayList[] thisBrands = new ArrayList[cate];
+    	//初始化
+    	for(int j=0; j<number; j++) {
+    		thisBrands[j] = new ArrayList();
+    	}
+    	//二维化数据结构，类似
+    	//筒{1,2,2,3,4}
+    	//条{2,3,3,4,5,6}
+    	//万{6,7,8,9,9}
+    	Set single = new HashSet();
     	for(int i=0; i<number; i++) {
     		int type = (int) Math.floor(info.play.get(i)/36);
     		int value = info.play.get(i)%36;
     		int digit = (int) Math.ceil(value/4);
-    		thisBrands[type][] = type;
+    		thisBrands[type].add(digit);
+    		single.add(type);
+    	}
+    	//判断是否缺桥
+    	if(single.size() == 3) {
+    		return 0;
     	}
     	//继续判定用户手牌数量，如果为1，则判断新牌和手牌一样，则胡牌
     	if(number == 1 && info.play.get(0) == unit) {
