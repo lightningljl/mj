@@ -47,23 +47,54 @@ public class Brands {
 			//第一个人摸14张排，第一个以后的人摸13张排
 			int iniNumber = i== 0? 14 : 13;
 			//默认0是庄家
-			Hands unit = touch(i, iniNumber);
+			Hands unit = initTouch(i, iniNumber);
 			hands.put(uidList[i], unit);
 		}
 	}
 	
 	/**
-	 * 摸牌方法
+	 * 初始摸牌方法
 	 * @param int key 第几个用户
 	 * @param int number 就是摸几张牌
 	 */
-	public Hands touch(int key, int number) {
+	public Hands initTouch(int key, int number) {
 		Hands unit = new Hands();
 		for( int i=0; i<number; i++ ) {
 			unit.card.add(leave.get(i));
 			leave.remove(i);
 		}
 		return unit;
+	}
+	
+	/**
+	 * 指定用户获取一张牌,摸牌
+	 * @param uid
+	 * @return
+	 */
+	public int gain(String uid) {
+		int number = leave.get(0);
+		leave.remove(0);
+		Hands thisHands = hands.get(uid);
+		thisHands.card.add(number);
+		return number;
+	}
+	
+	/**
+	 * 用户碰牌
+	 * @return
+	 */
+	public int touch(String uid, int unit) {
+		
+		return 0;
+	}
+	
+	
+	/**
+	 * 用户杠牌
+	 * @return
+	 */
+	public int bar(String uid) {
+		return 0;
 	}
 	
 	/**
