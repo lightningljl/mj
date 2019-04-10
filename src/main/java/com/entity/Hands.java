@@ -1,6 +1,8 @@
 package com.entity;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
    *  手牌类
@@ -38,4 +40,14 @@ public class Hands {
 	   * 判定用户多少藩,默认平胡,1藩
 	 */
 	public int score = 1;
+	
+	/**
+	 * 用来存储用户是否缺乔
+	 */
+	public Set<Integer> single;
+	
+	/**
+	 * 存储三维牌型，存储进入redis的时候要清除
+	 */
+	public HashMap<Integer, HashMap<Integer, Integer>> thisBrands;
 }

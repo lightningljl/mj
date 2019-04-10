@@ -26,6 +26,9 @@ public class Brands {
 	//定义剩下的牌的数组，初始化时108
 	public List<Integer> leave;
 	
+	//定义麻将维度
+	public int cate = 3;
+	
 	//定义用户手牌
 	//public Hands[] hands;
 	
@@ -79,6 +82,27 @@ public class Brands {
     }
     
     /**
+     * 碰牌
+     * @param uid 用户ID
+     * @param unit 牌号
+     */
+    public void touchCard(String uid, int unit) {
+    	
+    }
+    
+    /**
+     * 用户摸牌，返回牌
+     * @param uid
+     * @return
+     */
+    public int getCard(String uid) {
+    	int unit = leave.get(0);
+    	leave.remove(0);
+    	hands.get(uid).card.add(unit);
+    	return unit;
+    }
+    
+    /**
      * 出牌
      * @param unit
      */
@@ -103,39 +127,20 @@ public class Brands {
      * @return 默认0，没有胡牌，1代表胡牌了，1翻，以此类推
      */
     public int win(int unit, Hands info) {
-    	int cate = 3;
     	//将还在手中的牌转为二维数组
     	//0代表筒，1代表条，2代表万
     	int number = info.play.size();
     	//ArrayList<Integer>[] thisBrands = new ArrayList[cate];
-    	HashMap<Integer, HashMap<Integer, Integer>> thisBrands = new HashMap<Integer, HashMap<Integer, Integer>>();
-    	for(int i=0; i<cate; i++) {
-    		HashMap<Integer, Integer> thisUnit = new HashMap<>();
-    		thisBrands.put(i, thisUnit );
-    	}
-    	//二维化数据结构，类似
-    	//筒{1,2,2,3,4}
-    	//条{2,3,3,4,5,6}
-    	//万{6,7,8,9,9}
-    	Set<Integer> single = new HashSet<>();
-    	int detail = 0;
-    	int calc   = 0;
-    	for(int i=0; i<number; i++) {
-    		int type = (int) Math.floor(info.play.get(i)/36);
-    		int value = info.play.get(i)%36;
-    		int digit = (int) Math.ceil(value/4);
-    		calc = 1;
-    		if(thisBrands.get(type).containsKey(digit)) {
-    			calc = thisBrands.get(type).get(digit);
-    			calc++;
-    		}
-    		thisBrands.get(type).put(digit, calc);
-    		single.add(type);
-    	}
+    	transfer(info);
+    	HashMap<Integer, HashMap<Integer, Integer>> thisBrands = info.thisBrands;
+    	Set<Integer> single = info.single;
     	//判断是否缺桥
     	if(single.size() == 3) {
     		return 0;
     	}
+
+    	//记录将牌牌型
+    	single.clear();
     	//继续判定用户手牌数量，如果为1，则判断新牌和手牌一样，则胡牌
     	if(number == 1 && info.play.get(0) == unit) {
     		//进一步判断番数
@@ -145,8 +150,7 @@ public class Brands {
     	//先找到所有可能的将牌,拿出来，然后依次判断
     	int length = 0;
     	int win = 0;
-    	//记录将牌牌型
-    	single.clear();
+    	int calc   = 0;
     	HashMap<Integer, HashMap<Integer, Integer>> copy = null;
     	for(int i = 0; i<cate; i++) {
     		length = thisBrands.get(i).size();
@@ -229,5 +233,41 @@ public class Brands {
      */
     public int calc(int unit, Hands info) {
     	return 1;
+    }
+    
+    /**
+     * 将一维的麻将转为三维的，方便计算
+     * @param info
+     * @return
+     */
+    public void transfer(Hands info) {
+    	//将还在手中的牌转为二维数组
+    	//0代表筒，1代表条，2代表万
+    	int number = info.play.size();
+    	HashMap<Integer, HashMap<Integer, Integer>> thisBrands = new HashMap<Integer, HashMap<Integer, Integer>>();
+    	for(int i=0; i<cate; i++) {
+    		HashMap<Integer, Integer> thisUnit = new HashMap<>();
+    		thisBrands.put(i, thisUnit );
+    	}
+    	//二维化数据结构，类似
+    	//筒{1,2,2,3,4}
+    	//条{2,3,3,4,5,6}
+    	//万{6,7,8,9,9}
+    	Set<Integer> single = new HashSet<>();
+    	int calc   = 0;
+    	for(int i=0; i<number; i++) {
+    		int type = (int) Math.floor(info.play.get(i)/36);
+    		int value = info.play.get(i)%36;
+    		int digit = (int) Math.ceil(value/4);
+    		calc = 1;
+    		if(thisBrands.get(type).containsKey(digit)) {
+    			calc = thisBrands.get(type).get(digit);
+    			calc++;
+    		}
+    		thisBrands.get(type).put(digit, calc);
+    		single.add(type);
+    	}
+    	info.single = single;
+    	info.thisBrands = thisBrands;
     }
 }
