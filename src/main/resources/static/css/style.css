@@ -1,0 +1,65 @@
+@charset "UTF-8";
+body{
+	margin: 0;
+    overflow: hidden;
+	background-image: url(/image/bg.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	background-color: #464646;
+}
+.hide{
+	display:none;
+}
+.input-checkbox{
+    height: 14px;
+    width: 14px;
+    display: inline-block;
+    background-image: url('/image/checkbox_unchecked.png');
+    background-size:100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    vertical-align: middle;
+    margin-top: -4px;
+}
+input[type="checkbox"]:checked + .input-checkbox{
+    background-image: url('/image/checkbox_checked.png');
+    background-size:100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.input-radio{
+    height: 14px;
+    width: 14px;
+    display: inline-block;
+    background-image: url('/image/radio_unchecked.png');
+    background-size:100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    vertical-align: middle;
+    margin-top: -4px;
+}
+input[type="radio"]:checked + .input-radio{
+    background-image: url('/image/radio_checked.png');
+    background-size:100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.home{
+	width:320px;
+	height:363px;
+	background-image: url(/image/home_bg.png);
+	background-position: center center;
+	background-repeat: no-repeat;
+	position:relative;
+	overflow:hidden;
+	text-align:center;
+}
+.enter-room{
+	max-width:98%;
+}
+.create-room{
+	max-width:98%;
+}

@@ -83,8 +83,41 @@ public class Brands {
 	 * 用户碰牌
 	 * @return
 	 */
-	public int touch(String uid, int unit) {
-		
+	public boolean touch(int unit, Hands info) {
+		//将牌转为二维的
+		int[] newUnit = transferUnit( unit );
+		int number = checkTouch(newUnit, info);
+		if(number>1) {
+			//进行碰牌操作
+			//用户碰牌增加，手牌减少2个
+			info.touch.add(unit);
+			//反查基数
+			int basic = newUnit[0]*36+newUnit[1]*4;
+			//开始进行删除
+			int calc = 0;
+			for(int i=0; i<info.card.size(); i++) {
+			    if(info.card.get(i)>=basic) {
+			    	calc++;
+			    	info.card.remove(i);
+			    	if(calc==2) {
+			    		break;
+			    	}
+			    }	
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	
+	public int checkTouch(int[] unit, Hands info) {
+		HashMap<Integer, HashMap<Integer, Integer>> thisBrands = info.thisBrands;
+		//判定是否有该手牌
+		if(info.thisBrands.get(unit[0]).containsKey(unit[1]) ) {
+			int number = info.thisBrands.get(unit[0]).get(unit[1]);
+			//如果这种牌型有2个或者两个以上，则可以碰或者
+			return number;
+		}
 		return 0;
 	}
 	
@@ -93,8 +126,28 @@ public class Brands {
 	 * 用户杠牌
 	 * @return
 	 */
-	public int bar(String uid) {
-		return 0;
+	public boolean bar(int unit, Hands info) {
+		//将牌转为二维的
+		int[] newUnit = transferUnit( unit );
+		int number = checkTouch(newUnit, info);
+		if(number>2) {
+			info.bar.add(unit);
+			//反查基数
+			int basic = newUnit[0]*36+newUnit[1]*4;
+			//开始进行删除
+			int calc = 0;
+			for(int i=0; i<info.card.size(); i++) {
+			    if(info.card.get(i)>=basic) {
+			    	calc++;
+			    	info.card.remove(i);
+			    	if(calc==3) {
+			    		break;
+			    	}
+			    }	
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -112,14 +165,7 @@ public class Brands {
         Collections.shuffle(leave);
     }
     
-    /**
-     * 碰牌
-     * @param uid 用户ID
-     * @param unit 牌号
-     */
-    public void touchCard(String uid, int unit) {
-    	
-    }
+  
     
     /**
      * 用户摸牌，返回牌
@@ -208,8 +254,8 @@ public class Brands {
     }
     
     /**
-                 * 剔除将牌后的手牌，进一步判断是否胡牌
-                 * 判断是否满足n*ABC+k*DDD这种格式
+     * 剔除将牌后的手牌，进一步判断是否胡牌
+     * 判断是否满足n*ABC+k*DDD这种格式
      * @param thisBrands
      * @return
      */
@@ -300,5 +346,18 @@ public class Brands {
     	}
     	info.single = single;
     	info.thisBrands = thisBrands;
+    }
+    
+    /**
+     * 单个牌转换
+     * @param unit
+     * @return
+     */
+    public int[] transferUnit( int unit ) {
+    	int[] result = new int[2];
+    	result[0] = (int) Math.floor(unit/36);
+		int value = unit%36;
+		result[1] = (int) Math.ceil(value/4);
+		return result;
     }
 }

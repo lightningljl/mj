@@ -78,6 +78,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
  	        case(4):
  	        	 //先在数据库中创建房间
  	        	resp = operate.reader(data.get("room_id").toString(), uid);
+ 	            
  	    	    break;
     	}
         ctx.writeAndFlush(new TextWebSocketFrame(resp.toString()));

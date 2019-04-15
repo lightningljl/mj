@@ -1,5 +1,6 @@
 package com.entity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -15,21 +16,21 @@ public class Hands {
 	/**
 	 * 用户手牌，一纬
 	 */
-	public List<Integer> card;
+	public ArrayList<Integer> card;
 	/**
 	   * 用户出牌
 	 */
-	public List<Integer> play;
+	public ArrayList<Integer> play;
 	
 	/**
 	  * 用户碰牌
 	 */
-	public int[] touch = {};
+	public ArrayList<Integer> touch;
 	
 	/**
 	 * 用户杠牌
 	 */
-	public int[] bar = {};
+	public ArrayList<Integer> bar;
 	
 	/**
 	 * 是否胡牌,0否，1是,默认0

@@ -2,14 +2,119 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
 <title>Game</title>
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/layer/layer.js"></script>
+<script type="text/javascript" src="/js/three.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/style.css" />
 </head>
 <body>
-哈哈哈
-<a id="create-room" href="javascript:;">创建房间</a>
+<div class="content">
+	<div class="home">
+	    <img class="enter-room" alt="加入房间" src="/image/enter_home.png">
+	    <img class="create-room" alt="创建房间" src="/image/create_home.png">
+	     <label>
+             <input type="checkbox"  id="adviceRadio1" value="1" hidden/>
+             <label for="adviceRadio1" class="input-checkbox"></label>
+             <span class="checkbox-name">问题</span>
+         </label>
+         <label>
+             <input type="radio"  id="adviceRadio2" value="1"  hidden/>
+             <label for="adviceRadio2" class="input-radio"></label>
+             <span class="radio-name">问题</span>
+         </label>
+         <input type="radio" name="test" id="adviceRadio4" value="3"/>
+         <input type="radio" name="test" id="adviceRadio5" value="4"/>
+         <label>
+             <input type="radio"  id="adviceRadio3" value="2"  hidden/>
+             <label for="adviceRadio3" class="input-radio"></label>
+             <span class="radio-name">问题</span>
+         </label>
+	</div>
+</div>
+<!-- 创建房间弹窗-->
+<div class="create-home-mode hide">
+    <div class="create-home-content">
+        <div class="play-number">
+	         <span>局数选择:</span>
+	         <label>
+	             <input name="play" type="radio"  id="play1" value="4"  hidden/>
+	             <label for="play1" class="input-radio"></label>
+	             <span class="radio-name">4局</span>
+	         </label>
+	         <label>
+	             <input name="play" type="radio"  id="play2" value="8"  hidden/>
+	             <label for="play2" class="input-radio"></label>
+	             <span class="radio-name">8局</span>
+	         </label>
+	         <label>
+	             <input name="play" type="radio"  id="play3" value="16"  hidden/>
+	             <label for="play3" class="input-radio"></label>
+	             <span class="radio-name">16局</span>
+	         </label>
+	         <label>
+	             <input name="play" type="radio"  id="play4" value="24"  hidden/>
+	             <label for="play4" class="input-radio"></label>
+	             <span class="radio-name">24局</span>
+	         </label>
+	    </div>
+	    <div class="play-way">
+	         <span>玩法选择:</span>
+	         <label>
+	             <input name="way" type="radio"  id="way1" value="4"  hidden/>
+	             <label for="way1" class="input-radio"></label>
+	             <span class="radio-name">血战到底</span>
+	         </label>
+	         <label>
+	             <input name="way" type="radio"  id="way2" value="8"  hidden/>
+	             <label for="way2" class="input-radio"></label>
+	             <span class="radio-name">血流成河</span>
+	         </label>
+	         <label>
+	             <input name="way" type="radio"  id="way3" value="16"  hidden/>
+	             <label for="way3" class="input-radio"></label>
+	             <span class="radio-name">两房牌</span>
+	         </label>
+	    </div>
+	    <div class="fan-number">
+	         <span>玩法选择:</span>
+	         <label>
+	             <input name="fan" type="radio"  id="fan1" value="6"  hidden/>
+	             <label for="fan1" class="input-radio"></label>
+	             <span class="radio-name">6番</span>
+	         </label>
+	         <label>
+	             <input name="fan" type="radio"  id="fan2" value="8"  hidden/>
+	             <label for="fan2" class="input-radio"></label>
+	             <span class="radio-name">8番</span>
+	         </label>
+	         <label>
+	             <input name="fan" type="radio"  id="fan3" value="0"  hidden/>
+	             <label for="fan3" class="input-radio"></label>
+	             <span class="radio-name">不封顶</span>
+	         </label>
+	    </div>
+    </div>
+</div>
 </body>
 </html>
+<<script type="text/javascript">
+$(function(){
+	<!--创建房间-->
+	$('.create-room').click(function(){
+		//自定义标题风格
+		layer.open({
+		  title: [
+		    '创建房间',
+		    'background-color: #FF4351; color:#fff;'
+		  ]
+		  ,content: $('.create-home-mode').html()
+		});
+	});
+})
+
+</script>
 <script type="text/javascript">
 //定义麻将游戏数据结构
 var param   = {
