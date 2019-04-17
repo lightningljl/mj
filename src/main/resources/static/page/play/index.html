@@ -38,22 +38,22 @@
     <div class="create-home-content">
         <div class="play-number">
 	         <span>局数选择:</span>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="play" type="radio"  id="play1" value="4"  hidden/>
 	             <label for="play1" class="input-radio"></label>
 	             <span class="radio-name">4局</span>
 	         </label>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="play" type="radio"  id="play2" value="8"  hidden/>
 	             <label for="play2" class="input-radio"></label>
 	             <span class="radio-name">8局</span>
 	         </label>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="play" type="radio"  id="play3" value="16"  hidden/>
 	             <label for="play3" class="input-radio"></label>
 	             <span class="radio-name">16局</span>
 	         </label>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="play" type="radio"  id="play4" value="24"  hidden/>
 	             <label for="play4" class="input-radio"></label>
 	             <span class="radio-name">24局</span>
@@ -61,17 +61,17 @@
 	    </div>
 	    <div class="play-way">
 	         <span>玩法选择:</span>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="way" type="radio"  id="way1" value="4"  hidden/>
 	             <label for="way1" class="input-radio"></label>
 	             <span class="radio-name">血战到底</span>
 	         </label>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="way" type="radio"  id="way2" value="8"  hidden/>
 	             <label for="way2" class="input-radio"></label>
 	             <span class="radio-name">血流成河</span>
 	         </label>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="way" type="radio"  id="way3" value="16"  hidden/>
 	             <label for="way3" class="input-radio"></label>
 	             <span class="radio-name">两房牌</span>
@@ -79,27 +79,30 @@
 	    </div>
 	    <div class="fan-number">
 	         <span>玩法选择:</span>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="fan" type="radio"  id="fan1" value="6"  hidden/>
 	             <label for="fan1" class="input-radio"></label>
 	             <span class="radio-name">6番</span>
 	         </label>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="fan" type="radio"  id="fan2" value="8"  hidden/>
 	             <label for="fan2" class="input-radio"></label>
 	             <span class="radio-name">8番</span>
 	         </label>
-	         <label>
+	         <label class="radio-unit">
 	             <input name="fan" type="radio"  id="fan3" value="0"  hidden/>
 	             <label for="fan3" class="input-radio"></label>
 	             <span class="radio-name">不封顶</span>
 	         </label>
 	    </div>
+	    <div class="opreate">
+	        <a href="javascript:;" class="btn btn-green create-home">创建房间</a>
+	    </div>
     </div>
 </div>
 </body>
 </html>
-<<script type="text/javascript">
+<script type="text/javascript">
 $(function(){
 	<!--创建房间-->
 	$('.create-room').click(function(){
@@ -132,7 +135,7 @@ $.ajax({
 	    if(response.code == 1) {
 	    	uuid = response.data.uuid;
 	    	param.uid = uuid;
-	    	signal();
+	    	//signal();
 	    } else {
 	    	alert(response.msg);
 	    	window.location.href="/play/login";

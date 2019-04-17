@@ -21,7 +21,7 @@ body{
     background-repeat: no-repeat;
     background-position: center;
     vertical-align: middle;
-    margin-top: -4px;
+    /**margin-top: -4px;**/
 }
 input[type="checkbox"]:checked + .input-checkbox{
     background-image: url('/image/checkbox_checked.png');
@@ -39,7 +39,7 @@ input[type="checkbox"]:checked + .input-checkbox{
     background-repeat: no-repeat;
     background-position: center;
     vertical-align: middle;
-    margin-top: -4px;
+    /**margin-top: -4px;**/
 }
 input[type="radio"]:checked + .input-radio{
     background-image: url('/image/radio_checked.png');
@@ -62,4 +62,27 @@ input[type="radio"]:checked + .input-radio{
 }
 .create-room{
 	max-width:98%;
+}
+
+.create-home-content{
+	text-align:left;
+	font-size:16px;
+}
+
+.radio-unit{
+	padding-right:10px;
+}
+.btn{
+	border:0px;
+	width:80px;
+	height:30px;
+	color:#ffffff;
+	font-weight:bold;
+	padding:6px 12px 6px 12px;
+	border-radius:6px;
+	text-decoration:none;
+}
+
+.btn-green{
+	background:green;
 }
