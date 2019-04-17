@@ -12,6 +12,6 @@
         <result column="avatar" property="avatar" />
     </resultMap>
     <select id="inquire" resultMap="BaseResultMap">
-        select user_id,account,phone,nick,gender,avatar from users where id = #{id}
+        select user_id,account,phone,nick,gender,avatar from users where user_id = #{id}
     </select>
 </mapper>

@@ -2,7 +2,13 @@ package com.mj;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -20,6 +26,7 @@ import com.tools.Response;
 import com.validate.Regist;
 import com.dao.ActionLogDao;
 import com.dao.UserDao;
+import com.mj.service.Operate;
 import com.tools.Tools;
 
 @RestController
@@ -29,6 +36,8 @@ public class UserApplication {
 	public JdbcTemplate jdbcTemplate;
 	@Autowired
 	public HttpSession session;
+	@Resource
+	private Operate operate;
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	/**
 	 * 用户注册接口
@@ -93,6 +102,7 @@ public class UserApplication {
     	//返回前端登录成功
     	//Map user = (Map)session.getAttribute("user");
     	//String account = user.get("account").toString();
+    	operate.initUser(map.get("user_id").toString());
     	response.setCode(1);
     	response.setMsg("登录成功");
 		return response;
@@ -118,8 +128,56 @@ public class UserApplication {
 	 */
 	@RequestMapping(value="/user/test", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Response teset(){
-		Map user = (Map)session.getAttribute("user");
-		Response response = new Response(0, user.get("user_id").toString());
+//		ExecutorService pool = Executors.newCachedThreadPool();
+//		Callable c1 = new ThreadBoy(jdbcTemplate); 
+//		Callable c2 = new ThreadBoy(jdbcTemplate);
+//		Callable c3 = new ThreadBoy(jdbcTemplate);
+//		Callable c4 = new ThreadBoy(jdbcTemplate);
+//		Callable c5 = new ThreadBoy(jdbcTemplate);
+//		Future<Map> f1 = pool.submit(c1);
+//		Future<Map> f2 = pool.submit(c2);
+//		Future<Map> f3 = pool.submit(c3);
+//		Future<Map> f4 = pool.submit(c4);
+//		Future<Map> f5 = pool.submit(c5);
+		Response response = new Response(0, "成功");
+//		try {
+//			Map userInfo = f1.get();
+//			System.out.println(userInfo.toString());
+//			response.setData(userInfo);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		UserDao dao = new UserDao(jdbcTemplate);
+        Map map1 = dao.inquire("1");
+        Map map2 = dao.inquire("2");
+        Map map3 = dao.inquire("3");
+        Map map4 = dao.inquire("4");
+        Map map5 = dao.inquire("5");
+        System.out.println(map1.toString());
+		response.setData(map1);
 	    return response;
 	}
+}
+
+
+
+
+class ThreadBoy implements Callable<Map>{
+	
+	private JdbcTemplate jdbcTemplate;
+	
+	public ThreadBoy( JdbcTemplate obj ) {
+		jdbcTemplate = obj;
+	}
+	
+    @Override
+    public Map call() throws Exception {
+    	UserDao dao = new UserDao(jdbcTemplate);
+        Map map = dao.inquire("1");
+        return map;
+    }
 }

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tools.Operate;
+import com.mj.service.Operate;
 import com.tools.Response;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -22,7 +22,8 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
 	
 	public static Map<String, ChannelGroup> clientList = new ConcurrentHashMap<>();
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	private static Operate operate = new Operate();
+	@Autowired
+	private Operate operate;
 	
 	@Autowired
 	public JdbcTemplate jdbcTemplate;

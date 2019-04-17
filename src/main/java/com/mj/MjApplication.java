@@ -18,7 +18,7 @@ import com.mj.websocket.NettyServer;
 
 @SpringBootApplication
 @MapperScan("com.mybatis.mapper")
-@ComponentScan({"com.mj","com.mybatis.service"})
+@ComponentScan({"com.mj","com.mybatis.service","com.tools"})
 public class MjApplication {
 	@Autowired
     private Environment env;

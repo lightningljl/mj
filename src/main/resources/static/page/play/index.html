@@ -7,6 +7,7 @@
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="/js/layer/layer.js"></script>
 <script type="text/javascript" src="/js/three.min.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
 <link rel="stylesheet" type="text/css" href="/css/style.css" />
 </head>
 <body>
@@ -39,7 +40,7 @@
         <div class="play-number">
 	         <span>局数选择:</span>
 	         <label class="radio-unit">
-	             <input name="play" type="radio"  id="play1" value="4"  hidden/>
+	             <input name="play" type="radio"  id="play1" value="4" checked  hidden/>
 	             <label for="play1" class="input-radio"></label>
 	             <span class="radio-name">4局</span>
 	         </label>
@@ -62,7 +63,7 @@
 	    <div class="play-way">
 	         <span>玩法选择:</span>
 	         <label class="radio-unit">
-	             <input name="way" type="radio"  id="way1" value="4"  hidden/>
+	             <input name="way" type="radio"  id="way1" value="4" checked  hidden/>
 	             <label for="way1" class="input-radio"></label>
 	             <span class="radio-name">血战到底</span>
 	         </label>
@@ -80,7 +81,7 @@
 	    <div class="fan-number">
 	         <span>玩法选择:</span>
 	         <label class="radio-unit">
-	             <input name="fan" type="radio"  id="fan1" value="6"  hidden/>
+	             <input name="fan" type="radio"  id="fan1" value="6" checked  hidden/>
 	             <label for="fan1" class="input-radio"></label>
 	             <span class="radio-name">6番</span>
 	         </label>
@@ -103,83 +104,53 @@
 </body>
 </html>
 <script type="text/javascript">
+//登录校验
+loginCheck()
+
 $(function(){
-	<!--创建房间-->
+	<!--创建房间弹窗-->
 	$('.create-room').click(function(){
 		//自定义标题风格
 		layer.open({
-		  title: [
-		    '创建房间',
-		    'background-color: #FF4351; color:#fff;'
-		  ]
-		  ,content: $('.create-home-mode').html()
+		    type: 1,
+		    title: [
+		        '创建房间',
+		        'background-color: #FF4351; color:#fff;'
+		    ],
+		    content: $('.create-home-mode').html()
+		});
+	});
+	<!--创建房间方法-->
+	var lock = false;
+	$(document).on('click', '.create-home', function(){
+		//局数选择
+		var play = $('input[name="play"]').val();
+		//玩法选择
+		var way  = $('input[name="way"]').val();
+		//番选择
+		var fan = $('input[name="fan"]').val();
+		
+		if(lock==true){
+			return false;
+		}
+		lock=true;
+		$.post(Host+'/play/room', {
+			play : play,
+			way : way,
+			fan : fan
+		}, function(response){
+			lock=false;
+			if(response.code==1){
+				window.location.href=Host+'/play/play?rid='+response.data;
+			} else {
+				layer.open({
+				    content: response.data
+				    ,skin: 'msg'
+				    ,time: 2 //2秒后自动关闭
+				});
+			}
 		});
 	});
 })
-
-</script>
-<script type="text/javascript">
-//定义麻将游戏数据结构
-var param   = {
-	code : 0,   //标记
-	uid  : 0,
-	data : null    //具体数据结构
-}
-var uuid = 0;
-$.ajax({
-	url : '/user/uuid',
-	type : 'post',
-	async: false,//使用同步的方式,true为异步方式
-	data : {'client':'mj'},
-	success : function(response){
-	    if(response.code == 1) {
-	    	uuid = response.data.uuid;
-	    	param.uid = uuid;
-	    	//signal();
-	    } else {
-	    	alert(response.msg);
-	    	window.location.href="/play/login";
-	    }
-	}
-});
-
-function signal(){
-	var socket = new WebSocket('ws://127.0.0.1:8889/ws');
-	
-
-	//Add an event listener for when a connection is open
-	socket.onopen = function() {
-	     console.log('WebSocket connection opened. Ready to send messages.');
-	     //step1,用户注册
-	     param.code = 1;
-	     param.data = uuid;
-	     var data = JSON.stringify(param);
-	     socket.send(data);
-	};
-
-	//Add an event listener for when a message is received from the server
-	socket.onmessage = function(message) {
-	     //解析message中的数据，判断类型
-	};
-	
-	
-	//页面上操作主体方法
-	//step1创建房间
-	$("#create-room").click(function(){
-		param.code = 2;
-		//先默认基础价格为1元
-		//初始化参数 people代表玩的人数
-		//amount代表玩的金额
-	    param.data = {
-			people : 3, 
-			amount : 1
-		};
-	    var data = JSON.stringify(param);
-	    socket.send(data);
-	});
-}
-
-
-
 
 </script>
