@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybatis.entity.User;
 import com.mybatis.service.RoomService;
 import com.mybatis.service.UserService;
+import com.tools.JacksonUtil;
 import com.tools.Response;
 @Service
 public class Operate {
@@ -187,7 +188,8 @@ public class Operate {
      * 获取用户信息
      */
     public User getUser(String uid) {
-    	User user  = (User)redisTemplate.opsForValue().get("user_"+uid);
+    	//User user  = (User)redisTemplate.opsForValue().get("user_"+uid);
+    	User user = JacksonUtil.readValue(redisTemplate.opsForValue().get("user_"+uid).toString(), User.class);
     	return user;
     }
 }

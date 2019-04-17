@@ -1,5 +1,6 @@
 package com.entity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class Room {
+public class Room implements Serializable {
+	private static final long serialVersionUID = 1L;
 	//房间ID
 	public int id;
 	//初始化手牌
