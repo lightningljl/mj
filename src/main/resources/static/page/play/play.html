@@ -3,9 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>房间</title>
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/layer/layer.js"></script>
+<script type="text/javascript" src="/js/three.min.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
 </head>
 <body>
-
+进入了房间
 </body>
 </html>
 <script type="text/javascript">
@@ -13,25 +17,21 @@
 var param   = {
 	code : 0,   //标记
 	uid  : 0,
+	rid  : 0,    //房间id
 	data : null    //具体数据结构
 }
 var uuid = 0;
-$.ajax({
-	url : '/user/uuid',
-	type : 'post',
-	async: false,//使用同步的方式,true为异步方式
-	data : {'client':'mj'},
-	success : function(response){
-	    if(response.code == 1) {
-	    	uuid = response.data.uuid;
-	    	param.uid = uuid;
-	    	//signal();
-	    } else {
-	    	alert(response.msg);
-	    	window.location.href="/play/login";
-	    }
-	}
+//登录检测
+loginCheck(function(userId){
+	uuid = userId;
+	param.uid = userId;
 });
+var rid = GetQueryString("rid");
+if(isInteger(rid)){
+	param.rid = rid;
+	//进行ws通信
+	signal();
+}
 
 function signal(){
 	var socket = new WebSocket('ws://127.0.0.1:8889/ws');

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mj.service.Operate;
 import com.mybatis.service.RoomService;
@@ -49,12 +50,21 @@ public class PlayApplication {
 	}
 	
 	/**
+	 * 玩的页面
+	 */
+	@GetMapping(value="/play/play")
+	public String play() {
+		return "page/play/play";
+	}
+	
+	/**
 	  * 创建房间接口
 	 * @param play 多少局
 	 * @param way  玩法
 	 * @param fan 番数限制
 	 * @return Response
 	 */
+	@ResponseBody
 	@RequestMapping(value="/play/room", produces = MediaType.APPLICATION_JSON_VALUE,method= RequestMethod.POST)
 	public Response room(String play, String way, String fan) {
 		Map user = (Map)session.getAttribute("user");
