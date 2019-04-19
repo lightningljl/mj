@@ -48,6 +48,24 @@ public class Operate {
    	    storageUser(user);
    	    return response;
 	}
+
+	/**
+	 * 查询当前房间的用户情况
+	 * @param roomId
+	 * @param uid
+	 * @return
+	 */
+	public Response inquireUser(String roomId, String uid) {
+		Response response = new Response(0, "房间信息获取失败");
+		//以当前用户为中心，返回当前房间的用户列表
+        Room room = getRoom(roomId);
+		Player[] player = room.player;
+		for (int i=0; i<player.length; i++) {
+
+		}
+		
+		return response;
+	}
 	
 	/**
 	 * 创建房间
@@ -93,7 +111,7 @@ public class Operate {
 	/**
 	 * 进入房间操作
 	 * @param roomId
-	 * @param user
+	 * @param uid
 	 * @return
 	 */
 	public Response enterRoom(String roomId, String uid) {
@@ -159,15 +177,9 @@ public class Operate {
      * 存储房间
      */
     public void storageRoom(Room room) {
-    	 ObjectMapper mapper = new ObjectMapper();
-    	 String roomJson = "";
-		 try {
-			 roomJson = mapper.writeValueAsString(room);
-			 redisTemplate.opsForValue().set("room_"+String.valueOf(room.id), roomJson);
-		 } catch (JsonProcessingException e) {
-			 System.out.println("房间信息存储失败:"+roomJson);
-			 e.printStackTrace();
-		 }
+		String roomJson = JacksonUtil.toJSon(room);
+		System.out.println(roomJson);
+		redisTemplate.opsForValue().set("room_"+room.id, roomJson);
     }
     
     /**
@@ -193,4 +205,14 @@ public class Operate {
     	User user = JacksonUtil.readValue(redisTemplate.opsForValue().get("user_"+uid).toString(), User.class);
     	return user;
     }
+
+	/**
+	 * 通过房间ID获取redis中的房间ID
+	 * @param roomId
+	 * @return
+	 */
+	public Room getRoom(String roomId) {
+		Room room = JacksonUtil.readValue(redisTemplate.opsForValue().get("room_"+roomId).toString(), Room.class);
+		return room;
+	}
 }

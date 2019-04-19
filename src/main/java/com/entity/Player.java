@@ -46,5 +46,7 @@ public class Player {
 	public Player(String thisUid, String name, String avatar, int master) {
 		uid = thisUid;
 		nickName = name;
+		this.avatar = avatar;
+		this.master = master;
 	}
 }

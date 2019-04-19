@@ -40,7 +40,7 @@ function signal(){
 	//Add an event listener for when a connection is open
 	socket.onopen = function() {
 	     console.log('WebSocket connection opened. Ready to send messages.');
-	     //step1,用户注册
+	     //step1,获取当前房间用户情况
 	     param.code = 1;
 	     param.data = uuid;
 	     var data = JSON.stringify(param);
