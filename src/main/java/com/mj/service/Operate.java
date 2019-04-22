@@ -1,6 +1,7 @@
 package com.mj.service;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -9,6 +10,8 @@ import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +24,8 @@ import com.mybatis.service.RoomService;
 import com.mybatis.service.UserService;
 import com.tools.JacksonUtil;
 import com.tools.Response;
-@Service
+
+@Service("Operate")
 public class Operate {
 	
 	@Resource
@@ -33,7 +37,7 @@ public class Operate {
 	
 	//使用redission锁
 	private RedissonClient client;
-	
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	public Operate() {
 		Config config = new Config();
         config.useSingleServer().setAddress("redis://127.0.0.1:6379");
@@ -59,8 +63,8 @@ public class Operate {
 		Response response = new Response(0, "房间信息获取失败");
 		//以当前用户为中心，返回当前房间的用户列表
         Room room = getRoom(roomId);
-		Player[] player = room.player;
-		for (int i=0; i<player.length; i++) {
+		List<Player> player = room.playerList;
+		for (int i=0; i<player.size(); i++) {
 
 		}
 		
@@ -99,8 +103,6 @@ public class Operate {
       	   //将房间信息存入redis,并重新存储
       	   user.setRoomId(String.valueOf(roomId));
       	   storageUser(user);
-      	   //将用户所在的房间号放进redis
-      	   redisTemplate.opsForValue().set("room_"+String.valueOf(room.id), String.valueOf(roomId) );
       	   response.setCode(1);
            response.setMsg(String.valueOf(roomId));
          }
@@ -178,7 +180,6 @@ public class Operate {
      */
     public void storageRoom(Room room) {
 		String roomJson = JacksonUtil.toJSon(room);
-		System.out.println(roomJson);
 		redisTemplate.opsForValue().set("room_"+room.id, roomJson);
     }
     
@@ -212,7 +213,9 @@ public class Operate {
 	 * @return
 	 */
 	public Room getRoom(String roomId) {
-		Room room = JacksonUtil.readValue(redisTemplate.opsForValue().get("room_"+roomId).toString(), Room.class);
+		String roomJson = redisTemplate.opsForValue().get("room_"+roomId).toString();
+		logger.info(roomJson);
+		Room room = JacksonUtil.readValue(roomJson, Room.class);
 		return room;
 	}
 }

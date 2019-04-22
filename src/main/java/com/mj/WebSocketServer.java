@@ -151,7 +151,7 @@ public class WebSocketServer {
     	        		   sendMessage(response);
     	        		   break;
     	        	   } 
-    	        	   System.out.println(room.player[0].nickName);
+    	        	   System.out.println(room.playerList.get(0).nickName);
     	        	   //存储room信息
     	        	   storage(room);
     	        	   //将房间信息存入redis,并跳转

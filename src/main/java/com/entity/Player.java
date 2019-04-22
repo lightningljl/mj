@@ -1,6 +1,14 @@
 package com.entity;
 
-public class Player {
+
+import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
+public class Player implements Serializable {
+	private static final long serialVersionUID = 1L;
     /**
      * 用户ID
      */
@@ -35,6 +43,10 @@ public class Player {
 	 * 用户的排序
 	 */
 	public int sort = 0;
+	
+	public Player() {
+		
+	}
 	
 	/**
 	 * 

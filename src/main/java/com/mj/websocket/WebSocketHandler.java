@@ -2,34 +2,35 @@ package com.mj.websocket;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mj.MjApplication;
+import com.mj.service.ApplicationContextProvider;
 import com.mj.service.Operate;
 import com.tools.Response;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.util.concurrent.ImmediateEventExecutor;
+
 
 public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 	
 	public static Map<String, ChannelGroup> clientList = new ConcurrentHashMap<>();
+	private static ApplicationContext applicationContext;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	@Autowired
-	private Operate operate;
 	
-	@Autowired
-	public JdbcTemplate jdbcTemplate;
+	private Operate operate;
 	
 	@Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		operate = ApplicationContextProvider.getBean(Operate.class);
         System.out.println("与客户端建立连接，通道开启！");
     }
  
@@ -60,9 +61,9 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
         switch(code){
             //获取当前房间用户的信息
 	        case(1):
-//	        	 logger.info("action,用户:"+uid+"初始化连接");
-//	        	 resp = operate.initUser(uid);
-//                 break;
+	        	 logger.info("action,用户:"+uid+"进入房间，拉去用户信息");
+	        	 resp = operate.inquireUser(rid, uid);
+                 break;
                //创建房间
  	        case(2):
 // 	        	logger.info("action,用户:"+uid+"创建房间");

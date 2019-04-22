@@ -1,9 +1,12 @@
 package com.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +19,8 @@ public class Room implements Serializable {
 	//初始化手牌
 	public Brands brands;
 	//标记用户信息
-	public Player[] player;
+	@JsonProperty("playerList")
+	public List<Player> playerList;
     //标记用户当前的money,初始化时，每个用户都需要上交
     public int[] money;
     //初始化用户数量
@@ -31,18 +35,23 @@ public class Room implements Serializable {
     public HashMap<String, String> config;
     //当前进入人的数量
     public int calcNumber = 0;
+    
+    //方便初始化
+    public Room() {
+    	
+    }
     //给房价追加用户
     public Room(int id, int pnumber) {
     	this.id = id;
     	brands = new Brands();
-    	player = new Player[pnumber];
+    	playerList = new ArrayList<>();
     	people = pnumber;
     }
     
     //准备
     public int reader(int key) {
     	int canStart = 0;
-    	player[key].ready = 1;
+    	playerList.get(key).ready = 1;
     	readerNum++;
     	if(readerNum == people) {
     		canStart = 1;
@@ -60,7 +69,7 @@ public class Room implements Serializable {
     		return 0;
     	}
     	newPlayer.sort = calcNumber;
-    	player[calcNumber] = newPlayer;
+    	playerList.add(newPlayer);
     	calcNumber++;
     	return 1;
     }
@@ -71,8 +80,8 @@ public class Room implements Serializable {
     public Player inquirePlayer( String userId ) {
     	Player user = null;
     	for(int i=0;i<calcNumber;i++){
-    		if(player[i].uid.equals(userId)) {
-    			user = player[i];
+    		if(playerList.get(i).uid.equals(userId)) {
+    			user = playerList.get(i);
     			break;
     		}
     	}
@@ -84,7 +93,7 @@ public class Room implements Serializable {
      */
     public void setPlayer(Player user) {
     	int key = user.sort;
-    	player[key] = user;
+    	playerList.set(key, user);
     }
     
     /**
@@ -98,7 +107,7 @@ public class Room implements Serializable {
     	//获取用户ID
     	String[] uidList = new String[people];
     	for(int i=0;i<people;i++) {
-    		uidList[i] = player[i].uid;
+    		uidList[i] = playerList.get(i).uid;
     	}
     	brands.init(people, uidList);
     	return 1;

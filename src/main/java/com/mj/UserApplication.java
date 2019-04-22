@@ -22,10 +22,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.tools.JacksonUtil;
 import com.tools.Response;
 import com.validate.Regist;
 import com.dao.ActionLogDao;
 import com.dao.UserDao;
+import com.entity.Room;
 import com.mj.service.Operate;
 import com.tools.Tools;
 
@@ -128,6 +131,9 @@ public class UserApplication {
 	 */
 	@RequestMapping(value="/user/test", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Response teset(){
+		String roomJson = "{\"id\":6,\"brands\":{\"mj\":[[4,4,4,4,4,4,4,4,4],[4,4,4,4,4,4,4,4,4],[4,4,4,4,4,4,4,4,4]],\"total\":108,\"leave\":null,\"cate\":3,\"hands\":null},\"money\":null,\"people\":3,\"amount\":0,\"readerNum\":0,\"status\":0,\"config\":null,\"calcNumber\":1,\"playerList\":[{\"uid\":\"1\",\"ready\":0,\"nickName\":\"y3m3va\",\"avatar\":\"http://www.zuijiabianshou.com/public/upload/1286a526-4003-4873-b9e0-d31f987e7273.png\",\"amount\":0.0,\"master\":1,\"sort\":0}]}";
+		Room room = JacksonUtil.readValue(roomJson, Room.class);
+		System.out.println(room.people);
 //		ExecutorService pool = Executors.newCachedThreadPool();
 //		Callable c1 = new ThreadBoy(jdbcTemplate); 
 //		Callable c2 = new ThreadBoy(jdbcTemplate);
@@ -151,14 +157,14 @@ public class UserApplication {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		UserDao dao = new UserDao(jdbcTemplate);
-        Map map1 = dao.inquire("1");
-        Map map2 = dao.inquire("2");
-        Map map3 = dao.inquire("3");
-        Map map4 = dao.inquire("4");
-        Map map5 = dao.inquire("5");
-        System.out.println(map1.toString());
-		response.setData(map1);
+//		UserDao dao = new UserDao(jdbcTemplate);
+//        Map map1 = dao.inquire("1");
+//        Map map2 = dao.inquire("2");
+//        Map map3 = dao.inquire("3");
+//        Map map4 = dao.inquire("4");
+//        Map map5 = dao.inquire("5");
+//        System.out.println(map1.toString());
+//		response.setData(map1);
 	    return response;
 	}
 }
