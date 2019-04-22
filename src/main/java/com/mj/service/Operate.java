@@ -1,6 +1,8 @@
 package com.mj.service;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,14 +62,33 @@ public class Operate {
 	 * @return
 	 */
 	public Response inquireUser(String roomId, String uid) {
-		Response response = new Response(0, "房间信息获取失败");
+		Response response = new Response(1, "房间信息获取成功");
 		//以当前用户为中心，返回当前房间的用户列表
         Room room = getRoom(roomId);
-		List<Player> player = room.playerList;
-		for (int i=0; i<player.size(); i++) {
-
+        if(room==null){
+			response.setCode(0);
+			response.setMsg("房间信息获取失败");
+			return response;
 		}
-		
+		List<Player> playerInfo = room.playerList;
+		List<Player> sortPlayer = new ArrayList<>();
+		List<Player> temp = new ArrayList<>();
+		int find =0;
+		for (int i=0; i<playerInfo.size(); i++) {
+            if(playerInfo.get(i).uid==uid) {
+				find = 1;
+			}
+            if(find == 1){
+				sortPlayer.add(playerInfo.get(i));
+			} else {
+				temp.add(playerInfo.get(i));
+			}
+		}
+		//合并
+		sortPlayer.addAll(temp);
+		Map data = new HashMap();
+		data.put("user_list", sortPlayer);
+		response.setData(data);
 		return response;
 	}
 	
